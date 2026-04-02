@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import PageFrame from "../components/PageFrame";
+import { staggerItem, staggerParent } from "../components/motionPresets";
 import {
   addDays,
   formatDisplayDate,
@@ -12,7 +15,6 @@ import {
 export default function CycleTracker() {
   const [lastDate, setLastDate] = useState("");
   const [cycleLength, setCycleLength] = useState("");
-  const [duration, setDuration] = useState("");
   const [result, setResult] = useState(null);
   const [errors, setErrors] = useState({});
 
@@ -21,7 +23,6 @@ export default function CycleTracker() {
 
     setLastDate(storedCycleData.lastDate);
     setCycleLength(storedCycleData.cycleLength);
-    setDuration(storedCycleData.duration);
 
     if (storedCycleData.nextPeriod && storedCycleData.ovulationDate) {
       setResult({
@@ -67,7 +68,6 @@ export default function CycleTracker() {
     saveCycleData({
       lastDate,
       cycleLength: cycleLengthNumber,
-      duration,
       nextPeriod: nextPeriodIso,
       ovulationDate: ovulationIso,
       currentPhase,
@@ -81,17 +81,22 @@ export default function CycleTracker() {
   }
 
   return (
-    <main className="page-shell">
-      <section className="page-card tracker-card">
-        <h2 className="heading-with-icon">
-          <span className="heading-icon" aria-hidden="true">
-            🌸
-          </span>
-          Cycle Tracker
-        </h2>
+    <PageFrame className="page-shell cycle-page-shell">
+      <motion.section className="page-card tracker-card cycle-form-card" variants={staggerParent} initial="hidden" animate="show">
+        <motion.p className="cycle-kicker" variants={staggerItem}>
+          Predict and Plan
+        </motion.p>
 
-        <form onSubmit={handleCalculate} className="form-layout">
-          <div className="form-group">
+        <motion.h2 className="cycle-title" variants={staggerItem}>
+          Cycle Tracker
+        </motion.h2>
+
+        <motion.p className="cycle-intro" variants={staggerItem}>
+          Add your latest period date and average cycle length to calculate upcoming milestones.
+        </motion.p>
+
+        <motion.form onSubmit={handleCalculate} className="form-layout cycle-form" variants={staggerParent}>
+          <motion.div className="form-group cycle-field" variants={staggerItem}>
             <label htmlFor="last-date">Last Period Date</label>
             <input
               id="last-date"
@@ -104,9 +109,9 @@ export default function CycleTracker() {
               className={errors.lastDate ? "input-error" : ""}
             />
             {errors.lastDate && <p className="field-error">{errors.lastDate}</p>}
-          </div>
+          </motion.div>
 
-          <div className="form-group">
+          <motion.div className="form-group cycle-field" variants={staggerItem}>
             <label htmlFor="cycle-length">Cycle Length (days)</label>
             <input
               id="cycle-length"
@@ -121,41 +126,48 @@ export default function CycleTracker() {
               className={errors.cycleLength ? "input-error" : ""}
             />
             {errors.cycleLength && <p className="field-error">{errors.cycleLength}</p>}
-          </div>
+          </motion.div>
 
-          <div className="form-group">
-            <label htmlFor="duration">Duration (optional, days)</label>
-            <input
-              id="duration"
-              type="number"
-              value={duration}
-              onChange={(event) => setDuration(event.target.value)}
-              placeholder="e.g. 5"
-              min="1"
-            />
-          </div>
+          <motion.button type="submit" className="btn-primary btn-block cycle-submit" variants={staggerItem}>
+            Calculate Cycle
+          </motion.button>
+        </motion.form>
 
-          <button type="submit" className="btn-primary btn-block">
-            Calculate
-          </button>
-        </form>
-
-        {result && (
-          <section className="result-card">
-            <h3>Results</h3>
-            <p>Last Period Date: {lastDate || "-"}</p>
-            <p>Cycle Length: {cycleLength || "-"} days</p>
-            <p>Duration: {duration || "-"} days</p>
-            <p>Next Period Date: {formatDisplayDate(result.nextPeriodDate)}</p>
-            <p>Ovulation Date: {formatDisplayDate(result.ovulationDate)}</p>
-            <p>Current Phase: {result.currentPhase}</p>
-          </section>
-        )}
-
-        <p className="link-row">
+        <motion.p className="link-row cycle-link-row" variants={staggerItem}>
           <Link to="/dashboard">Back to Dashboard</Link>
-        </p>
-      </section>
-    </main>
+        </motion.p>
+      </motion.section>
+
+      {result && (
+        <motion.section
+          className="page-card tracker-result-card"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <p className="tracker-results-kicker">Cycle Prediction</p>
+          <h3 className="tracker-results-heading">Your Results</h3>
+
+          <div className="tracker-highlight-grid">
+            <article className="tracker-highlight-item">
+              <p className="tracker-highlight-label">Next Period</p>
+              <p className="tracker-highlight-value">{formatDisplayDate(result.nextPeriodDate)}</p>
+            </article>
+
+            <article className="tracker-highlight-item">
+              <p className="tracker-highlight-label">Ovulation</p>
+              <p className="tracker-highlight-value">{formatDisplayDate(result.ovulationDate)}</p>
+            </article>
+
+            <article className="tracker-highlight-item">
+              <p className="tracker-highlight-label">Current Phase</p>
+              <p className="tracker-highlight-value">{result.currentPhase || "--"}</p>
+            </article>
+          </div>
+        </motion.section>
+      )}
+    </PageFrame>
   );
 }
+
+

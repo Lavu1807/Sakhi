@@ -1,5 +1,8 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
+import PageFrame from "../components/PageFrame";
+import { staggerItem, staggerParent } from "../components/motionPresets";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -58,17 +61,25 @@ export default function Signup() {
   }
 
   return (
-    <main className="page-shell">
-      <section className="page-card auth-card">
-        <h2 className="heading-with-icon">
+    <PageFrame>
+      <motion.section className="page-card auth-card" variants={staggerParent} initial="hidden" animate="show">
+        <motion.p className="eyebrow" variants={staggerItem}>
+          Start Your Journey
+        </motion.p>
+
+        <motion.h2 className="heading-with-icon" variants={staggerItem}>
           <span className="heading-icon" aria-hidden="true">
             ✨
           </span>
           Signup
-        </h2>
+        </motion.h2>
 
-        <form onSubmit={handleRegister} className="form-layout" noValidate>
-          <div className="form-group">
+        <motion.p className="section-intro compact" variants={staggerItem}>
+          Build your profile and personalize your cycle wellness experience.
+        </motion.p>
+
+        <motion.form onSubmit={handleRegister} className="form-layout" noValidate variants={staggerParent}>
+          <motion.div className="form-group" variants={staggerItem}>
             <label htmlFor="signup-name">Name</label>
             <input
               id="signup-name"
@@ -80,9 +91,9 @@ export default function Signup() {
               className={errors.name ? "input-error" : ""}
             />
             {errors.name && <p className="field-error">{errors.name}</p>}
-          </div>
+          </motion.div>
 
-          <div className="form-group">
+          <motion.div className="form-group" variants={staggerItem}>
             <label htmlFor="signup-email">Email</label>
             <input
               id="signup-email"
@@ -94,9 +105,9 @@ export default function Signup() {
               className={errors.email ? "input-error" : ""}
             />
             {errors.email && <p className="field-error">{errors.email}</p>}
-          </div>
+          </motion.div>
 
-          <div className="form-group">
+          <motion.div className="form-group" variants={staggerItem}>
             <label htmlFor="signup-password">Password</label>
             <input
               id="signup-password"
@@ -108,17 +119,19 @@ export default function Signup() {
               className={errors.password ? "input-error" : ""}
             />
             {errors.password && <p className="field-error">{errors.password}</p>}
-          </div>
+          </motion.div>
 
-          <button type="submit" className="btn-primary btn-block">
+          <motion.button type="submit" className="btn-primary btn-block" variants={staggerItem}>
             Register
-          </button>
-        </form>
+          </motion.button>
+        </motion.form>
 
-        <p className="link-row">
+        <motion.p className="link-row" variants={staggerItem}>
           Already have an account? <Link to="/">Back to Login</Link>
-        </p>
-      </section>
-    </main>
+        </motion.p>
+      </motion.section>
+    </PageFrame>
   );
 }
+
+

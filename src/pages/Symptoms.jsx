@@ -1,11 +1,36 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import PageFrame from "../components/PageFrame";
+import { staggerItem, staggerParent } from "../components/motionPresets";
 
 const initialSymptoms = {
   cramps: false,
   headache: false,
   fatigue: false,
   moodSwings: false,
+};
+
+const SYMPTOM_GROUPS = [
+  {
+    title: "Physical Symptoms",
+    items: [
+      { key: "cramps", label: "Cramps" },
+      { key: "headache", label: "Headache" },
+      { key: "fatigue", label: "Fatigue" },
+    ],
+  },
+  {
+    title: "Emotional Symptoms",
+    items: [{ key: "moodSwings", label: "Mood Swings" }],
+  },
+];
+
+const SYMPTOM_LABELS = {
+  cramps: "Cramps",
+  headache: "Headache",
+  fatigue: "Fatigue",
+  moodSwings: "Mood Swings",
 };
 
 export default function Symptoms() {
@@ -60,11 +85,7 @@ export default function Symptoms() {
       }
     }
 
-    const selectedLabels = [];
-    if (symptoms.cramps) selectedLabels.push("Cramps");
-    if (symptoms.headache) selectedLabels.push("Headache");
-    if (symptoms.fatigue) selectedLabels.push("Fatigue");
-    if (symptoms.moodSwings) selectedLabels.push("Mood Swings");
+    const selectedLabels = selectedSymptoms.map((key) => SYMPTOM_LABELS[key]);
 
     setResult({
       selectedLabels,
@@ -74,89 +95,107 @@ export default function Symptoms() {
   }
 
   return (
-    <main className="page-shell">
-      <section className="page-card symptoms-card">
-        <h2>Symptoms Checker</h2>
+    <PageFrame>
+      <motion.section className="page-card symptoms-card" variants={staggerParent} initial="hidden" animate="show">
+        <motion.p className="eyebrow" variants={staggerItem}>
+          Understand What You Feel
+        </motion.p>
 
-        <form onSubmit={handleSubmit} className="form-layout">
-          <div className="checkbox-list">
-            <label className="checkbox-item" htmlFor="symptom-cramps">
-              <input
-                id="symptom-cramps"
-                type="checkbox"
-                name="cramps"
-                checked={symptoms.cramps}
-                onChange={handleCheckboxChange}
-              />
-              Cramps
-            </label>
+        <motion.h2 className="heading-with-icon" variants={staggerItem}>
+          <span className="heading-icon" aria-hidden="true">
+            🩺
+          </span>
+          Symptoms Checker
+        </motion.h2>
 
-            <label className="checkbox-item" htmlFor="symptom-headache">
-              <input
-                id="symptom-headache"
-                type="checkbox"
-                name="headache"
-                checked={symptoms.headache}
-                onChange={handleCheckboxChange}
-              />
-              Headache
-            </label>
+        <motion.p className="section-intro symptoms-intro" variants={staggerItem}>
+          Select what you are experiencing so we can organize gentle self-care guidance.
+        </motion.p>
 
-            <label className="checkbox-item" htmlFor="symptom-fatigue">
-              <input
-                id="symptom-fatigue"
-                type="checkbox"
-                name="fatigue"
-                checked={symptoms.fatigue}
-                onChange={handleCheckboxChange}
-              />
-              Fatigue
-            </label>
+        <motion.form onSubmit={handleSubmit} className="form-layout" variants={staggerParent}>
+          <motion.div className="symptom-groups" variants={staggerParent}>
+            {SYMPTOM_GROUPS.map((group) => (
+              <motion.section key={group.title} className="symptom-group-card" variants={staggerItem}>
+                <h3 className="symptom-group-title">{group.title}</h3>
+                <div className="checkbox-list symptom-checkbox-list">
+                  {group.items.map((item) => {
+                    const inputId = `symptom-${item.key}`;
 
-            <label className="checkbox-item" htmlFor="symptom-mood-swings">
-              <input
-                id="symptom-mood-swings"
-                type="checkbox"
-                name="moodSwings"
-                checked={symptoms.moodSwings}
-                onChange={handleCheckboxChange}
-              />
-              Mood Swings
-            </label>
-          </div>
+                    return (
+                      <label key={item.key} className="checkbox-item" htmlFor={inputId}>
+                        <input
+                          id={inputId}
+                          type="checkbox"
+                          name={item.key}
+                          checked={symptoms[item.key]}
+                          onChange={handleCheckboxChange}
+                        />
+                        {item.label}
+                      </label>
+                    );
+                  })}
+                </div>
+              </motion.section>
+            ))}
+          </motion.div>
 
-          <button type="submit" className="btn-primary btn-block">
+          <motion.button type="submit" className="btn-primary btn-block" variants={staggerItem}>
             Check Symptoms
-          </button>
-        </form>
+          </motion.button>
+        </motion.form>
 
-        <p className="disclaimer-text">This is not a medical diagnosis.</p>
+        <motion.p className="disclaimer-text symptoms-disclaimer" variants={staggerItem}>
+          For awareness only. This checker does not replace medical advice.
+        </motion.p>
 
         {result && (
-          <section className="result-card">
+          <motion.section
+            className="result-card symptoms-result-box"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+          >
             <h3>Selected Symptoms</h3>
-            <p>{result.selectedLabels.length ? result.selectedLabels.join(", ") : "--"}</p>
+            <div className="symptom-tags-row">
+              {result.selectedLabels.length ? (
+                result.selectedLabels.map((label) => (
+                  <span key={label} className="symptom-tag">
+                    {label}
+                  </span>
+                ))
+              ) : (
+                <p className="symptom-empty-state">No symptoms selected.</p>
+              )}
+            </div>
 
-            <h3 className="sub-section-title">Possible General Causes</h3>
-            <ul className="nutrition-list">
-              {result.possibleCauses.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
+            <div className="symptom-result-grid">
+              <section className="symptom-result-panel">
+                <h3 className="sub-section-title">Possible General Causes</h3>
+                <ul className="nutrition-list symptom-result-list">
+                  {result.possibleCauses.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </section>
 
-            <h3 className="sub-section-title">Basic Suggestions</h3>
-            <ul className="nutrition-list">
-              {result.basicSuggestions.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </section>
+              <section className="symptom-result-panel">
+                <h3 className="sub-section-title">Basic Suggestions</h3>
+                <ul className="nutrition-list symptom-result-list">
+                  {result.basicSuggestions.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </section>
+            </div>
+          </motion.section>
         )}
 
-        <p className="link-row">
+        <motion.p className="link-row" variants={staggerItem}>
           <Link to="/dashboard">Back to Dashboard</Link>
-        </p>
-      </section>
-    </main>
+        </motion.p>
+      </motion.section>
+    </PageFrame>
   );
 }
+
+

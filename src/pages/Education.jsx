@@ -1,4 +1,7 @@
+import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import PageFrame from "../components/PageFrame";
+import { staggerItem, staggerParent } from "../components/motionPresets";
 
 const mythsAndFacts = [
   {
@@ -29,26 +32,55 @@ const mythsAndFacts = [
 
 export default function Education() {
   return (
-    <main className="page-shell">
-      <section className="page-card">
-        <h2>Myths vs Facts</h2>
-        <p className="education-intro">
+    <PageFrame>
+      <motion.section className="page-card" variants={staggerParent} initial="hidden" animate="show">
+        <motion.p className="eyebrow" variants={staggerItem}>
+          Bust The Stigma
+        </motion.p>
+
+        <motion.h2 className="heading-with-icon" variants={staggerItem}>
+          <span className="heading-icon" aria-hidden="true">
+            📘
+          </span>
+          Myths vs Facts
+        </motion.h2>
+
+        <motion.p className="education-intro" variants={staggerItem}>
           Learn the facts, challenge stigma, and support healthy conversations around menstrual health.
-        </p>
+        </motion.p>
 
-        <div className="myth-fact-grid">
+        <motion.div className="myth-fact-grid" variants={staggerParent}>
           {mythsAndFacts.map((item) => (
-            <article className="myth-fact-card" key={item.myth}>
-              <p className="myth-label">Myth: {item.myth}</p>
-              <p className="fact-label">Fact: {item.fact}</p>
-            </article>
-          ))}
-        </div>
+            <motion.article className="myth-fact-card" key={item.myth} variants={staggerItem}>
+              <section className="myth-block">
+                <p className="myth-fact-kicker">
+                  <span className="myth-fact-icon" aria-hidden="true">
+                    ⚠️
+                  </span>
+                  Myth
+                </p>
+                <p className="myth-label">{item.myth}</p>
+              </section>
 
-        <p className="link-row">
+              <section className="fact-block">
+                <p className="myth-fact-kicker fact">
+                  <span className="myth-fact-icon" aria-hidden="true">
+                    💡
+                  </span>
+                  Fact
+                </p>
+                <p className="fact-label">{item.fact}</p>
+              </section>
+            </motion.article>
+          ))}
+        </motion.div>
+
+        <motion.p className="link-row" variants={staggerItem}>
           <Link to="/dashboard">Back to Dashboard</Link>
-        </p>
-      </section>
-    </main>
+        </motion.p>
+      </motion.section>
+    </PageFrame>
   );
 }
+
+

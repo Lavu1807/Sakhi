@@ -1,5 +1,8 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
+import PageFrame from "../components/PageFrame";
+import { staggerItem, staggerParent } from "../components/motionPresets";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -53,53 +56,60 @@ export default function Login() {
   }
 
   return (
-    <main className="page-shell">
-      <section className="page-card auth-card">
-        <h2 className="heading-with-icon">
-          <span className="heading-icon" aria-hidden="true">
-            🔐
-          </span>
-          Login
-        </h2>
+    <PageFrame className="page-shell login-page-shell">
+      <motion.section className="page-card auth-card login-card" variants={staggerParent} initial="hidden" animate="show">
+        <motion.p className="login-welcome" variants={staggerItem}>
+          Welcome to SAKHI
+        </motion.p>
 
-        <form onSubmit={handleLogin} className="form-layout" noValidate>
-          <div className="form-group">
+        <motion.h2 className="login-title" variants={staggerItem}>
+          Sign in
+        </motion.h2>
+
+        <motion.p className="login-subtitle" variants={staggerItem}>
+          Continue your calm, personalized wellness journey.
+        </motion.p>
+
+        <motion.form onSubmit={handleLogin} className="form-layout" noValidate variants={staggerParent}>
+          <motion.div className="form-group" variants={staggerItem}>
             <label htmlFor="login-email">Email</label>
             <input
               id="login-email"
               type="email"
               name="email"
-              placeholder="Enter email"
+              placeholder="name@example.com"
               value={formValues.email}
               onChange={handleInputChange}
               className={errors.email ? "input-error" : ""}
             />
             {errors.email && <p className="field-error">{errors.email}</p>}
-          </div>
+          </motion.div>
 
-          <div className="form-group">
+          <motion.div className="form-group" variants={staggerItem}>
             <label htmlFor="login-password">Password</label>
             <input
               id="login-password"
               type="password"
               name="password"
-              placeholder="Enter password"
+              placeholder="Enter your password"
               value={formValues.password}
               onChange={handleInputChange}
               className={errors.password ? "input-error" : ""}
             />
             {errors.password && <p className="field-error">{errors.password}</p>}
-          </div>
+          </motion.div>
 
-          <button type="submit" className="btn-primary btn-block">
-            Login
-          </button>
-        </form>
+          <motion.button type="submit" className="btn-primary btn-block" variants={staggerItem}>
+            Continue
+          </motion.button>
+        </motion.form>
 
-        <p className="link-row">
+        <motion.p className="link-row login-link-row" variants={staggerItem}>
           New user? <Link to="/signup">Go to Signup</Link>
-        </p>
-      </section>
-    </main>
+        </motion.p>
+      </motion.section>
+    </PageFrame>
   );
 }
+
+

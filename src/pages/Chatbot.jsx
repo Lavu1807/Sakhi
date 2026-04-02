@@ -1,5 +1,8 @@
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import PageFrame from "../components/PageFrame";
+import { staggerItem, staggerParent } from "../components/motionPresets";
 
 function getBotReply(message) {
   const text = message.toLowerCase();
@@ -48,35 +51,62 @@ export default function Chatbot() {
   }
 
   return (
-    <main className="page-shell">
-      <section className="page-card chatbot-card">
-        <h2>Sakhi Chatbot</h2>
+    <PageFrame>
+      <motion.section className="page-card chatbot-card chatbot-shell" variants={staggerParent} initial="hidden" animate="show">
+        <motion.p className="eyebrow" variants={staggerItem}>
+          Always Here To Listen
+        </motion.p>
 
-        <div className="chat-history" aria-live="polite">
-          {messages.map((message, index) => (
-            <div key={`${message.sender}-${index}`} className={`chat-message ${message.sender}`}>
-              <div className="chat-bubble">{message.text}</div>
-            </div>
-          ))}
-        </div>
+        <motion.h2 className="heading-with-icon" variants={staggerItem}>
+          <span className="heading-icon" aria-hidden="true">
+            💬
+          </span>
+          Sakhi Chatbot
+        </motion.h2>
 
-        <form onSubmit={handleSend} className="chat-form">
-          <input
-            type="text"
-            className="chat-input"
-            placeholder="Type your message..."
-            value={inputMessage}
-            onChange={(event) => setInputMessage(event.target.value)}
-          />
-          <button type="submit" className="btn-primary">
-            Send
-          </button>
-        </form>
+        <motion.p className="chatbot-note" variants={staggerItem}>
+          Share how you are feeling today. I will respond with gentle, supportive guidance.
+        </motion.p>
 
-        <p className="link-row">
+        <motion.div className="chatbot-interaction" variants={staggerItem}>
+          <div className="chat-history" aria-live="polite">
+            <AnimatePresence initial={false}>
+              {messages.map((message, index) => (
+                <motion.div
+                  layout
+                  key={`${message.sender}-${index}`}
+                  className={`chat-message ${message.sender}`}
+                  initial={{ opacity: 0, y: 12, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                  transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <div className="chat-bubble">{message.text}</div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+
+          <form onSubmit={handleSend} className="chat-form chat-composer">
+            <input
+              type="text"
+              className="chat-input"
+              placeholder="Type your message"
+              value={inputMessage}
+              onChange={(event) => setInputMessage(event.target.value)}
+            />
+            <button type="submit" className="btn-primary chat-send-btn">
+              Send
+            </button>
+          </form>
+        </motion.div>
+
+        <motion.p className="link-row" variants={staggerItem}>
           <Link to="/dashboard">Back to Dashboard</Link>
-        </p>
-      </section>
-    </main>
+        </motion.p>
+      </motion.section>
+    </PageFrame>
   );
 }
+
+
