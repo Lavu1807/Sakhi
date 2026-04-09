@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import PageFrame from "../components/PageFrame";
 import { staggerItem, staggerParent } from "../components/motionPresets";
+import { addCycleEntry, getCycleHistory, getPrediction } from "../utils/api";
+import { getAuthToken } from "../utils/auth";
 import {
   addDays,
   formatDisplayDate,
@@ -16,10 +18,14 @@ export default function CycleTracker() {
   const [lastDate, setLastDate] = useState("");
   const [cycleLength, setCycleLength] = useState("");
   const [result, setResult] = useState(null);
+  const [history, setHistory] = useState([]);
   const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const storedCycleData = readCycleData();
+    const token = getAuthToken();
 
     setLastDate(storedCycleData.lastDate);
     setCycleLength(storedCycleData.cycleLength);
@@ -29,11 +35,33 @@ export default function CycleTracker() {
         nextPeriodDate: storedCycleData.nextPeriod,
         ovulationDate: storedCycleData.ovulationDate,
         currentPhase: storedCycleData.currentPhase,
+        currentDay: storedCycleData.currentDay,
+        ovulationDay: storedCycleData.ovulationDay,
+        cycleLengthUsed: storedCycleData.cycleLengthUsed,
+        cycleCount: storedCycleData.cycleCount,
+        phaseMessage: storedCycleData.phaseMessage,
+        confidenceLevel: storedCycleData.confidenceLevel,
+        irregularityFlag: storedCycleData.irregularityFlag,
       });
     }
+
+    async function loadHistory() {
+      if (!token) {
+        return;
+      }
+
+      try {
+        const response = await getCycleHistory(token);
+        setHistory(response.entries || []);
+      } catch {
+        setHistory([]);
+      }
+    }
+
+    loadHistory();
   }, []);
 
-  function handleCalculate(event) {
+  async function handleCalculate(event) {
     event.preventDefault();
 
     const validationErrors = {};
@@ -59,25 +87,76 @@ export default function CycleTracker() {
       return;
     }
 
-    const nextPeriodDate = addDays(lastPeriodDate, cycleLengthNumber);
-    const ovulationDate = addDays(nextPeriodDate, -14);
-    const currentPhase = getCurrentPhase(lastPeriodDate, cycleLengthNumber);
-    const nextPeriodIso = nextPeriodDate.toISOString();
-    const ovulationIso = ovulationDate.toISOString();
+    const token = getAuthToken();
+    if (!token) {
+      setApiError("Your session has expired. Please login again.");
+      return;
+    }
 
-    saveCycleData({
-      lastDate,
-      cycleLength: cycleLengthNumber,
-      nextPeriod: nextPeriodIso,
-      ovulationDate: ovulationIso,
-      currentPhase,
-    });
+    setApiError("");
+    setIsSubmitting(true);
 
-    setResult({
-      nextPeriodDate: nextPeriodIso,
-      ovulationDate: ovulationIso,
-      currentPhase,
-    });
+    try {
+      await addCycleEntry(
+        {
+          period_start_date: lastDate,
+        },
+        token,
+      );
+
+      const prediction = await getPrediction(token, cycleLengthNumber);
+      const adaptiveCycleLength = Number(prediction.averageCycleLength || cycleLengthNumber);
+      const nextPeriodDate = prediction.nextPeriodDate
+        ? parseInputDate(prediction.nextPeriodDate)
+        : addDays(lastPeriodDate, adaptiveCycleLength);
+      const ovulationDate = prediction.ovulationDate ? parseInputDate(prediction.ovulationDate) : addDays(nextPeriodDate, -14);
+      const currentPhase = prediction.currentPhase || getCurrentPhase(lastPeriodDate, adaptiveCycleLength);
+      const currentDay = Number.isFinite(Number(prediction.currentDay)) ? Number(prediction.currentDay) : "";
+      const ovulationDay = Number.isFinite(Number(prediction.ovulationDay)) ? Number(prediction.ovulationDay) : "";
+      const cycleLengthUsed = Number.isFinite(Number(prediction.cycleLengthUsed))
+        ? Number(prediction.cycleLengthUsed)
+        : adaptiveCycleLength;
+      const cycleCount = Number.isFinite(Number(prediction.cycleCount)) ? Number(prediction.cycleCount) : "";
+      const phaseMessage = typeof prediction.phaseMessage === "string" ? prediction.phaseMessage : "";
+      const nextPeriodIso = nextPeriodDate.toISOString();
+      const ovulationIso = ovulationDate.toISOString();
+
+      saveCycleData({
+        lastDate,
+        cycleLength: adaptiveCycleLength,
+        nextPeriod: nextPeriodIso,
+        ovulationDate: ovulationIso,
+        currentPhase,
+        currentDay,
+        ovulationDay,
+        cycleLengthUsed,
+        cycleCount,
+        phaseMessage,
+        confidenceLevel: prediction.confidenceLevel,
+        irregularityFlag: prediction.irregularityFlag,
+        variation: prediction.variation,
+      });
+
+      setResult({
+        nextPeriodDate: nextPeriodIso,
+        ovulationDate: ovulationIso,
+        currentPhase,
+        currentDay,
+        ovulationDay,
+        cycleLengthUsed,
+        cycleCount,
+        phaseMessage,
+        confidenceLevel: prediction.confidenceLevel,
+        irregularityFlag: prediction.irregularityFlag,
+      });
+
+      const updatedHistory = await getCycleHistory(token);
+      setHistory(updatedHistory.entries || []);
+    } catch (error) {
+      setApiError(error.message || "Unable to save cycle data.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -128,8 +207,19 @@ export default function CycleTracker() {
             {errors.cycleLength && <p className="field-error">{errors.cycleLength}</p>}
           </motion.div>
 
-          <motion.button type="submit" className="btn-primary btn-block cycle-submit" variants={staggerItem}>
-            Calculate Cycle
+          {apiError && (
+            <motion.p className="field-error" variants={staggerItem}>
+              {apiError}
+            </motion.p>
+          )}
+
+          <motion.button
+            type="submit"
+            className="btn-primary btn-block cycle-submit"
+            variants={staggerItem}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Saving..." : "Save and Predict"}
           </motion.button>
         </motion.form>
 
@@ -163,6 +253,48 @@ export default function CycleTracker() {
               <p className="tracker-highlight-label">Current Phase</p>
               <p className="tracker-highlight-value">{result.currentPhase || "--"}</p>
             </article>
+
+            <article className="tracker-highlight-item">
+              <p className="tracker-highlight-label">Current Day</p>
+              <p className="tracker-highlight-value">{result.currentDay || "--"}</p>
+            </article>
+
+            <article className="tracker-highlight-item">
+              <p className="tracker-highlight-label">Ovulation Day</p>
+              <p className="tracker-highlight-value">{result.ovulationDay || "--"}</p>
+            </article>
+
+            <article className="tracker-highlight-item">
+              <p className="tracker-highlight-label">Confidence</p>
+              <p className="tracker-highlight-value">{result.confidenceLevel || "--"}</p>
+            </article>
+
+            <article className="tracker-highlight-item">
+              <p className="tracker-highlight-label">Cycle Pattern</p>
+              <p className="tracker-highlight-value">{result.irregularityFlag ? "Irregular" : "Regular"}</p>
+            </article>
+          </div>
+
+          {result.phaseMessage && <p className="section-intro compact">{result.phaseMessage}</p>}
+        </motion.section>
+      )}
+
+      {history.length > 0 && (
+        <motion.section
+          className="page-card tracker-result-card"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <p className="tracker-results-kicker">Saved Entries</p>
+          <h3 className="tracker-results-heading">Cycle History</h3>
+          <div className="tracker-highlight-grid">
+            {history.slice(0, 6).map((entry) => (
+              <article key={entry.id} className="tracker-highlight-item">
+                <p className="tracker-highlight-label">Entry #{entry.id}</p>
+                <p className="tracker-highlight-value">{formatDisplayDate(entry.period_start_date)}</p>
+              </article>
+            ))}
           </div>
         </motion.section>
       )}

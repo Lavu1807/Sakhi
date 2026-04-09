@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import PageFrame from "../components/PageFrame";
 import { staggerItem, staggerParent } from "../components/motionPresets";
+import { signupUser } from "../utils/api";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -12,6 +13,9 @@ export default function Signup() {
     password: "",
   });
   const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState("");
+  const [apiSuccess, setApiSuccess] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function validateSignup() {
     const nextErrors = {};
@@ -48,7 +52,7 @@ export default function Signup() {
     }));
   }
 
-  function handleRegister(event) {
+  async function handleRegister(event) {
     event.preventDefault();
 
     const validationErrors = validateSignup();
@@ -57,7 +61,24 @@ export default function Signup() {
       return;
     }
 
-    navigate("/");
+    setApiError("");
+    setApiSuccess("");
+    setIsSubmitting(true);
+
+    try {
+      await signupUser({
+        name: formValues.name.trim(),
+        email: formValues.email.trim(),
+        password: formValues.password,
+      });
+
+      setApiSuccess("Signup successful. Please login.");
+      navigate("/", { replace: true });
+    } catch (error) {
+      setApiError(error.message || "Unable to signup. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -121,8 +142,20 @@ export default function Signup() {
             {errors.password && <p className="field-error">{errors.password}</p>}
           </motion.div>
 
-          <motion.button type="submit" className="btn-primary btn-block" variants={staggerItem}>
-            Register
+          {apiError && (
+            <motion.p className="field-error" variants={staggerItem}>
+              {apiError}
+            </motion.p>
+          )}
+
+          {apiSuccess && (
+            <motion.p className="section-intro compact" variants={staggerItem}>
+              {apiSuccess}
+            </motion.p>
+          )}
+
+          <motion.button type="submit" className="btn-primary btn-block" variants={staggerItem} disabled={isSubmitting}>
+            {isSubmitting ? "Creating account..." : "Register"}
           </motion.button>
         </motion.form>
 

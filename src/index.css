@@ -545,8 +545,77 @@ p {
   line-height: 1.4;
 }
 
+.dashboard-improving-message {
+  margin-top: 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(181, 174, 214, 0.35);
+  background: #f8f4ff;
+  color: #4f4660;
+  font-size: 0.92rem;
+  font-weight: 700;
+  padding: 10px 12px;
+}
+
 .dashboard-calendar-wrap {
   margin-top: 16px;
+}
+
+.dashboard-insights-card {
+  margin-top: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(181, 174, 214, 0.34);
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(85, 76, 101, 0.08);
+  padding: 16px;
+}
+
+.dashboard-stats-card {
+  margin-top: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(181, 174, 214, 0.34);
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(85, 76, 101, 0.08);
+  padding: 16px;
+}
+
+.dashboard-stats-grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.dashboard-stat-item {
+  border-radius: 12px;
+  border: 1px solid rgba(181, 174, 214, 0.3);
+  background: #fcfaff;
+  padding: 12px;
+}
+
+.dashboard-stat-label {
+  color: #6d657c;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.dashboard-stat-value {
+  margin-top: 6px;
+  color: #3f384c;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.dashboard-insights-list {
+  margin: 12px 0 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 8px;
+}
+
+.dashboard-insights-item {
+  color: #564f64;
+  font-size: 0.92rem;
+  line-height: 1.5;
 }
 
 .dashboard-calendar-card {
@@ -636,19 +705,34 @@ p {
   opacity: 0.36;
 }
 
-.calendar-day.period-day {
+.calendar-day.phase-menstrual {
   background: #ffe7f0;
-  border-color: #f6cadb;
+  border-color: #f4bfd5;
 }
 
-.calendar-day.ovulation-day {
-  background: #efe9fb;
-  border-color: #d6c7ef;
+.calendar-day.phase-follicular {
+  background: #eaf4ff;
+  border-color: #c7ddf9;
 }
 
-.calendar-day.fertile-day {
-  background: #f8f4ff;
-  border-color: #e6dcf5;
+.calendar-day.phase-ovulation {
+  background: #ede1ff;
+  border-color: #ccb5f4;
+}
+
+.calendar-day.phase-luteal {
+  background: #fff8d8;
+  border-color: #f0e0a1;
+}
+
+.calendar-day.period-strong {
+  border-color: #e1a2bf;
+  box-shadow: inset 0 0 0 2px rgba(189, 91, 139, 0.24);
+}
+
+.calendar-day.ovulation-strong {
+  border-color: #aa8fe0;
+  box-shadow: inset 0 0 0 2px rgba(137, 109, 203, 0.32), 0 4px 10px rgba(137, 109, 203, 0.22);
 }
 
 .calendar-day.today-day {
@@ -681,19 +765,24 @@ p {
   border: 1px solid transparent;
 }
 
-.legend-dot.period {
+.legend-dot.menstrual {
   background: #ffe7f0;
-  border-color: #f6cadb;
+  border-color: #f4bfd5;
+}
+
+.legend-dot.follicular {
+  background: #eaf4ff;
+  border-color: #c7ddf9;
 }
 
 .legend-dot.ovulation {
-  background: #efe9fb;
-  border-color: #d6c7ef;
+  background: #ede1ff;
+  border-color: #ccb5f4;
 }
 
-.legend-dot.fertile {
-  background: #f8f4ff;
-  border-color: #e6dcf5;
+.legend-dot.luteal {
+  background: #fff8d8;
+  border-color: #f0e0a1;
 }
 
 .calendar-selection-box,
@@ -741,9 +830,24 @@ p {
   border-color: #d6c7ef;
 }
 
-.calendar-chip.fertile {
-  background: #f8f4ff;
-  border-color: #e6dcf5;
+.calendar-chip.phase-menstrual-chip {
+  background: #ffe7f0;
+  border-color: #f4bfd5;
+}
+
+.calendar-chip.phase-follicular-chip {
+  background: #eaf4ff;
+  border-color: #c7ddf9;
+}
+
+.calendar-chip.phase-ovulation-chip {
+  background: #ede1ff;
+  border-color: #ccb5f4;
+}
+
+.calendar-chip.phase-luteal-chip {
+  background: #fff8d8;
+  border-color: #f0e0a1;
 }
 
 .calendar-chip.today {
@@ -1410,6 +1514,10 @@ p {
     grid-template-columns: 1fr;
   }
 
+  .dashboard-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .calendar-day {
     min-height: 32px;
   }
@@ -1460,6 +1568,10 @@ p {
 
   .dashboard-calendar-card {
     padding: 12px;
+  }
+
+  .dashboard-stats-grid {
+    grid-template-columns: 1fr;
   }
 
   .calendar-grid {

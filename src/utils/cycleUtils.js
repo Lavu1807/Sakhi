@@ -7,6 +7,14 @@ export const EMPTY_CYCLE_DATA = {
   nextPeriod: "",
   ovulationDate: "",
   currentPhase: "",
+  currentDay: "",
+  ovulationDay: "",
+  cycleLengthUsed: "",
+  cycleCount: "",
+  phaseMessage: "",
+  confidenceLevel: "",
+  irregularityFlag: null,
+  variation: "",
 };
 
 export function parseInputDate(value) {
@@ -99,6 +107,12 @@ export function formatOvulationWindow(ovulationDateValue) {
 }
 
 function normalizeCycleData(data) {
+  const variationValue = Number(data?.variation);
+  const currentDayValue = Number(data?.currentDay);
+  const ovulationDayValue = Number(data?.ovulationDay);
+  const cycleLengthUsedValue = Number(data?.cycleLengthUsed);
+  const cycleCountValue = Number(data?.cycleCount);
+
   return {
     ...EMPTY_CYCLE_DATA,
     lastDate: typeof data?.lastDate === "string" ? data.lastDate : "",
@@ -107,6 +121,14 @@ function normalizeCycleData(data) {
     nextPeriod: typeof data?.nextPeriod === "string" ? data.nextPeriod : "",
     ovulationDate: typeof data?.ovulationDate === "string" ? data.ovulationDate : "",
     currentPhase: typeof data?.currentPhase === "string" ? data.currentPhase : "",
+    currentDay: Number.isFinite(currentDayValue) ? currentDayValue : "",
+    ovulationDay: Number.isFinite(ovulationDayValue) ? ovulationDayValue : "",
+    cycleLengthUsed: Number.isFinite(cycleLengthUsedValue) ? cycleLengthUsedValue : "",
+    cycleCount: Number.isFinite(cycleCountValue) ? cycleCountValue : "",
+    phaseMessage: typeof data?.phaseMessage === "string" ? data.phaseMessage : "",
+    confidenceLevel: typeof data?.confidenceLevel === "string" ? data.confidenceLevel : "",
+    irregularityFlag: typeof data?.irregularityFlag === "boolean" ? data.irregularityFlag : null,
+    variation: Number.isFinite(variationValue) ? variationValue : "",
   };
 }
 

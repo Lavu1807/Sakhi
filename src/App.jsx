@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 import Nutrition from "./pages/Nutrition";
 import Signup from "./pages/Signup";
 import Symptoms from "./pages/Symptoms";
+import { getAuthToken } from "./utils/auth";
 
 const AUTH_NAV_ITEMS = [
   { to: "/", label: "Login", end: true },
@@ -153,20 +154,97 @@ function AppLayout() {
   );
 }
 
+function RequireAuth({ children }) {
+  const location = useLocation();
+  const token = getAuthToken();
+
+  if (!token) {
+    return <Navigate to="/" replace state={{ from: location.pathname }} />;
+  }
+
+  return children;
+}
+
+function RedirectIfAuthenticated({ children }) {
+  const token = getAuthToken();
+
+  if (token) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+}
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         {/* Shared layout keeps navigation and page frame consistent across routes. */}
         <Route element={<AppLayout />}>
-          <Route path="/" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/cycle" element={<CycleTracker />} />
-          <Route path="/nutrition" element={<Nutrition />} />
-          <Route path="/symptoms" element={<Symptoms />} />
-          <Route path="/education" element={<Education />} />
-          <Route path="/chatbot" element={<Chatbot />} />
+          <Route
+            path="/"
+            element={
+              <RedirectIfAuthenticated>
+                <Login />
+              </RedirectIfAuthenticated>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <RedirectIfAuthenticated>
+                <Signup />
+              </RedirectIfAuthenticated>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <RequireAuth>
+                <Dashboard />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/cycle"
+            element={
+              <RequireAuth>
+                <CycleTracker />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/nutrition"
+            element={
+              <RequireAuth>
+                <Nutrition />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/symptoms"
+            element={
+              <RequireAuth>
+                <Symptoms />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/education"
+            element={
+              <RequireAuth>
+                <Education />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/chatbot"
+            element={
+              <RequireAuth>
+                <Chatbot />
+              </RequireAuth>
+            }
+          />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

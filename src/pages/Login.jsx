@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import PageFrame from "../components/PageFrame";
 import { staggerItem, staggerParent } from "../components/motionPresets";
+import { loginUser } from "../utils/api";
+import { saveAuthSession } from "../utils/auth";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -11,6 +13,8 @@ export default function Login() {
     password: "",
   });
   const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function validateLogin() {
     const nextErrors = {};
@@ -43,7 +47,7 @@ export default function Login() {
     }));
   }
 
-  function handleLogin(event) {
+  async function handleLogin(event) {
     event.preventDefault();
 
     const validationErrors = validateLogin();
@@ -52,7 +56,26 @@ export default function Login() {
       return;
     }
 
-    navigate("/dashboard");
+    setApiError("");
+    setIsSubmitting(true);
+
+    try {
+      const response = await loginUser({
+        email: formValues.email.trim(),
+        password: formValues.password,
+      });
+
+      saveAuthSession({
+        token: response.token,
+        user: response.user,
+      });
+
+      navigate("/dashboard", { replace: true });
+    } catch (error) {
+      setApiError(error.message || "Unable to login. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -99,8 +122,14 @@ export default function Login() {
             {errors.password && <p className="field-error">{errors.password}</p>}
           </motion.div>
 
-          <motion.button type="submit" className="btn-primary btn-block" variants={staggerItem}>
-            Continue
+          {apiError && (
+            <motion.p className="field-error" variants={staggerItem}>
+              {apiError}
+            </motion.p>
+          )}
+
+          <motion.button type="submit" className="btn-primary btn-block" variants={staggerItem} disabled={isSubmitting}>
+            {isSubmitting ? "Signing in..." : "Continue"}
           </motion.button>
         </motion.form>
 
