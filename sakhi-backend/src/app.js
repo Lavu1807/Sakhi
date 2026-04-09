@@ -4,6 +4,7 @@ const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
 const cycleRoutes = require("./routes/cycleRoutes");
 const dailyLogRoutes = require("./routes/dailyLogRoutes");
+const nutritionRoutes = require("./routes/nutritionRoutes");
 const predictionRoutes = require("./routes/predictionRoutes");
 
 const app = express();
@@ -26,11 +27,13 @@ app.get("/api/health", (req, res) => {
 app.use("/", authRoutes);
 app.use("/cycle", cycleRoutes);
 app.use("/daily-logs", dailyLogRoutes);
+app.use("/nutrition", nutritionRoutes);
 app.use("/prediction", predictionRoutes);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/cycle", cycleRoutes);
 app.use("/api/daily-logs", dailyLogRoutes);
+app.use("/api/nutrition", nutritionRoutes);
 app.use("/api/prediction", predictionRoutes);
 
 app.use((req, res) => {

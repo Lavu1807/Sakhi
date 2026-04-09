@@ -96,3 +96,10 @@ export function getDailyLogs(token, { from, to } = {}) {
     token,
   });
 }
+
+export function getFoodNutrition(food, token) {
+  return request(`/nutrition/${encodeURIComponent(food)}`, {
+    method: "GET",
+    token,
+  });
+}

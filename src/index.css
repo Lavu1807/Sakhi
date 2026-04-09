@@ -1127,6 +1127,56 @@ p {
   color: #4a4259;
 }
 
+.summary-text {
+  margin-top: 0;
+  margin-bottom: 12px;
+  color: #5f5670;
+  line-height: 1.5;
+}
+
+.nutrition-inline-tags {
+  margin-top: 8px;
+}
+
+.nutrition-input-card {
+  margin-top: 8px;
+}
+
+.nutrition-symptom-list {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.nutrition-dashboard-card {
+  margin-top: 12px;
+}
+
+.nutrition-explanation {
+  margin-bottom: 0;
+}
+
+.nutrition-api-status {
+  margin-top: 10px;
+  margin-bottom: 0;
+  color: #5d556e;
+  font-size: 0.88rem;
+}
+
+.nutrition-api-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nutrition-api-warning {
+  color: #8f4b4b;
+}
+
+.nutrient-tag {
+  background: #eaf7ff;
+  border-color: rgba(136, 196, 230, 0.55);
+  color: #385d74;
+}
+
 .nutrition-suggestion-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
@@ -1176,6 +1226,130 @@ p {
   display: grid;
   gap: 7px;
   color: #534a61;
+}
+
+.nutrition-category-grid {
+  margin-top: 12px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.nutrition-category-panel {
+  background: linear-gradient(180deg, #fffefe 0%, #fcf9ff 100%);
+}
+
+.nutrition-category-title {
+  margin-top: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nutrition-category-list li {
+  margin-bottom: 8px;
+}
+
+.nutrition-food-card {
+  list-style: none;
+  margin: 0;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(181, 174, 214, 0.32);
+  background: linear-gradient(180deg, #ffffff 0%, #fbf9ff 100%);
+  box-shadow: 0 8px 18px rgba(85, 76, 101, 0.06);
+}
+
+.nutrition-food-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.nutrition-card-loader {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: #6f6780;
+  font-weight: 600;
+}
+
+.nutrition-spinner {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  border: 2px solid rgba(162, 154, 192, 0.35);
+  border-top-color: #7c70a8;
+  animation: nutrition-spin 0.9s linear infinite;
+}
+
+.nutrition-food-name {
+  display: block;
+  color: #4f4760;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.nutrition-food-reason {
+  margin: 0 0 8px;
+  color: #6a6178;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.nutrition-metrics-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.nutrition-metric-card {
+  margin: 0;
+  border-radius: 10px;
+  border: 1px solid rgba(146, 205, 176, 0.45);
+  background: #f1fbf5;
+  padding: 8px 10px;
+}
+
+.nutrition-metric-card-label {
+  margin: 0;
+  color: #4f5f58;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.nutrition-metric-card-value {
+  margin: 3px 0 0;
+  color: #2f5444;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.nutrition-metric-card-value span {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #4f5f58;
+}
+
+.nutrition-unavailable {
+  margin: 4px 0 0;
+  color: #7a7289;
+  font-size: 0.82rem;
+}
+
+@keyframes nutrition-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .nutrition-list li::marker {
