@@ -6,6 +6,10 @@ export const EMPTY_CYCLE_DATA = {
   duration: "",
   nextPeriod: "",
   ovulationDate: "",
+  fertileWindowStart: "",
+  fertileWindowEnd: "",
+  isApproximatePrediction: false,
+  predictionMode: "",
   currentPhase: "",
   currentDay: "",
   ovulationDay: "",
@@ -106,6 +110,14 @@ export function formatOvulationWindow(ovulationDateValue) {
   return `${formatDisplayDate(windowStart)} - ${formatDisplayDate(windowEnd)}`;
 }
 
+export function formatDateRange(startDateValue, endDateValue) {
+  if (!startDateValue || !endDateValue) {
+    return "--";
+  }
+
+  return `${formatDisplayDate(startDateValue)} - ${formatDisplayDate(endDateValue)}`;
+}
+
 function normalizeCycleData(data) {
   const variationValue = Number(data?.variation);
   const currentDayValue = Number(data?.currentDay);
@@ -120,6 +132,10 @@ function normalizeCycleData(data) {
     duration: data?.duration ? String(data.duration) : "",
     nextPeriod: typeof data?.nextPeriod === "string" ? data.nextPeriod : "",
     ovulationDate: typeof data?.ovulationDate === "string" ? data.ovulationDate : "",
+    fertileWindowStart: typeof data?.fertileWindowStart === "string" ? data.fertileWindowStart : "",
+    fertileWindowEnd: typeof data?.fertileWindowEnd === "string" ? data.fertileWindowEnd : "",
+    isApproximatePrediction: Boolean(data?.isApproximatePrediction),
+    predictionMode: typeof data?.predictionMode === "string" ? data.predictionMode : "",
     currentPhase: typeof data?.currentPhase === "string" ? data.currentPhase : "",
     currentDay: Number.isFinite(currentDayValue) ? currentDayValue : "",
     ovulationDay: Number.isFinite(ovulationDayValue) ? ovulationDayValue : "",

@@ -3,8 +3,8 @@
 Base URL: http://localhost:5000
 
 Note: Both plain and namespaced routes are supported.
-- Plain: /signup, /login, /cycle, /daily-logs, /prediction
-- Namespaced: /api/auth/signup, /api/auth/login, /api/cycle, /api/daily-logs, /api/prediction
+- Plain: /signup, /login, /cycle, /daily-logs, /symptoms, /prediction
+- Namespaced: /api/auth/signup, /api/auth/login, /api/cycle, /api/daily-logs, /api/symptoms, /api/prediction
 
 ## 1) Signup
 POST /signup
@@ -223,5 +223,71 @@ Success response (200):
   "irregularityFlag": false,
   "cycleCount": 4,
   "variation": 4
+}
+```
+
+## 8) Add Symptom Entry
+POST /symptoms
+Header: `Authorization: Bearer <jwt_token>`
+
+Request body:
+```json
+{
+  "date": "2026-05-12",
+  "cycleDay": 13,
+  "phase": "Ovulation",
+  "painLevel": 4,
+  "flowLevel": "light",
+  "mood": "anxious",
+  "symptoms": ["cramps", "bloating"],
+  "sleepHours": 6.8,
+  "activityLevel": "moderate"
+}
+```
+
+Success response (201):
+```json
+{
+  "message": "Symptom entry saved successfully.",
+  "entry": {
+    "id": 3,
+    "userId": 1,
+    "date": "2026-05-12",
+    "cycleDay": 13,
+    "phase": "Ovulation",
+    "painLevel": 4,
+    "flowLevel": "light",
+    "mood": "anxious",
+    "symptoms": ["cramps", "bloating"],
+    "sleepHours": 6.8,
+    "activityLevel": "moderate",
+    "createdAt": "2026-05-12T09:25:48.181Z"
+  }
+}
+```
+
+## 9) Get Symptom Entries
+GET /symptoms?from=2026-05-01&to=2026-05-31&phase=Ovulation&limit=100
+Header: `Authorization: Bearer <jwt_token>`
+
+Success response (200):
+```json
+{
+  "entries": [
+    {
+      "id": 3,
+      "userId": 1,
+      "date": "2026-05-12",
+      "cycleDay": 13,
+      "phase": "Ovulation",
+      "painLevel": 4,
+      "flowLevel": "light",
+      "mood": "anxious",
+      "symptoms": ["cramps", "bloating"],
+      "sleepHours": 6.8,
+      "activityLevel": "moderate",
+      "createdAt": "2026-05-12T09:25:48.181Z"
+    }
+  ]
 }
 ```

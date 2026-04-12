@@ -1,53 +1,99 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import PageFrame from "../components/PageFrame";
 import { staggerItem, staggerParent } from "../components/motionPresets";
+import { sendChatMessage } from "../utils/api";
+import { getAuthToken } from "../utils/auth";
+import { getSymptomChatContext } from "../utils/symptomContext";
+import { getMoodChatContext } from "../utils/moodContext";
 
-function getBotReply(message) {
-  const text = message.toLowerCase();
+const QUICK_SUGGESTIONS = ["I have cramps", "I feel sad", "What should I eat?"];
+const BOT_ERROR_MESSAGE = "I am having trouble responding right now. Please try again in a moment.";
 
-  if (text.includes("pain")) {
-    return "I am sorry you are in pain. Please rest, stay hydrated, and use a warm compress. If pain is severe, consider talking to a doctor.";
+function createMessage(sender, text) {
+  return {
+    id: `${sender}-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+    sender,
+    text,
+  };
+}
+
+function createSessionId() {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
   }
 
-  if (text.includes("sad")) {
-    return "It is okay to feel this way. You are not alone. Try slow breathing, light movement, and speaking to someone you trust.";
-  }
-
-  if (text.includes("period")) {
-    return "Periods are a normal part of the menstrual cycle. Tracking your dates can help you understand patterns and feel more prepared.";
-  }
-
-  return "I am here to support you. Tell me more about how you are feeling, and we can take one small step at a time.";
+  return `session-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
 export default function Chatbot() {
   const [inputMessage, setInputMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState([
-    {
-      sender: "bot",
-      text: "Hi, I am Sakhi support bot. You can share how you feel, and I will try to help.",
-    },
+    createMessage("bot", "Hi, I am Sakhi support bot. You can share how you feel, and I will try to help."),
   ]);
+  const sessionIdRef = useRef(createSessionId());
+  const chatHistoryRef = useRef(null);
 
-  function handleSend(event) {
-    event.preventDefault();
-
-    const trimmedMessage = inputMessage.trim();
-    if (!trimmedMessage) {
+  useEffect(() => {
+    const chatContainer = chatHistoryRef.current;
+    if (!chatContainer) {
       return;
     }
 
-    const botReply = getBotReply(trimmedMessage);
+    chatContainer.scrollTo({
+      top: chatContainer.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [messages, isLoading]);
 
-    setMessages((previousMessages) => [
-      ...previousMessages,
-      { sender: "user", text: trimmedMessage },
-      { sender: "bot", text: botReply },
-    ]);
+  async function submitMessage(rawMessage) {
+    const trimmedMessage = String(rawMessage || "").trim();
+    if (!trimmedMessage || isLoading) {
+      return;
+    }
 
+    setMessages((previousMessages) => [...previousMessages, createMessage("user", trimmedMessage)]);
     setInputMessage("");
+    setIsLoading(true);
+    const symptomChatContext = getSymptomChatContext();
+    const moodChatContext = getMoodChatContext();
+    const userContext = {
+      ...(symptomChatContext || {}),
+      ...(moodChatContext || {}),
+    };
+
+    try {
+      const response = await sendChatMessage(
+        {
+          message: trimmedMessage,
+          sessionId: sessionIdRef.current,
+          userContext: Object.keys(userContext).length > 0 ? userContext : undefined,
+        },
+        getAuthToken() || undefined,
+      );
+
+      const botReply =
+        typeof response?.reply === "string" && response.reply.trim().length > 0
+          ? response.reply.trim()
+          : BOT_ERROR_MESSAGE;
+
+      setMessages((previousMessages) => [...previousMessages, createMessage("bot", botReply)]);
+    } catch {
+      setMessages((previousMessages) => [...previousMessages, createMessage("bot", BOT_ERROR_MESSAGE)]);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function handleSend(event) {
+    event.preventDefault();
+    await submitMessage(inputMessage);
+  }
+
+  async function handleSuggestionClick(suggestion) {
+    await submitMessage(suggestion);
   }
 
   return (
@@ -69,12 +115,28 @@ export default function Chatbot() {
         </motion.p>
 
         <motion.div className="chatbot-interaction" variants={staggerItem}>
-          <div className="chat-history" aria-live="polite">
+          <div className="chat-suggestions" role="group" aria-label="Quick suggestions">
+            {QUICK_SUGGESTIONS.map((suggestion) => (
+              <button
+                key={suggestion}
+                type="button"
+                className="chat-suggestion-btn"
+                onClick={() => handleSuggestionClick(suggestion)}
+                disabled={isLoading}
+              >
+                {suggestion}
+              </button>
+            ))}
+          </div>
+
+          {isLoading ? <p className="chat-loading-state">Generating response...</p> : null}
+
+          <div ref={chatHistoryRef} className="chat-history" aria-live="polite" aria-busy={isLoading}>
             <AnimatePresence initial={false}>
-              {messages.map((message, index) => (
+              {messages.map((message) => (
                 <motion.div
                   layout
-                  key={`${message.sender}-${index}`}
+                  key={message.id}
                   className={`chat-message ${message.sender}`}
                   initial={{ opacity: 0, y: 12, scale: 0.98 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -84,6 +146,27 @@ export default function Chatbot() {
                   <div className="chat-bubble">{message.text}</div>
                 </motion.div>
               ))}
+
+              {isLoading ? (
+                <motion.div
+                  layout
+                  key="typing-indicator"
+                  className="chat-message bot"
+                  initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                  transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <div className="chat-bubble chat-typing-bubble" role="status" aria-live="polite">
+                    <span className="typing-indicator" aria-hidden="true">
+                      <span />
+                      <span />
+                      <span />
+                    </span>
+                    <span className="chat-typing-text">Sakhi is typing...</span>
+                  </div>
+                </motion.div>
+              ) : null}
             </AnimatePresence>
           </div>
 
@@ -91,12 +174,17 @@ export default function Chatbot() {
             <input
               type="text"
               className="chat-input"
-              placeholder="Type your message"
+              placeholder={isLoading ? "Please wait for Sakhi response" : "Type your message"}
               value={inputMessage}
               onChange={(event) => setInputMessage(event.target.value)}
+              disabled={isLoading}
             />
-            <button type="submit" className="btn-primary chat-send-btn">
-              Send
+            <button
+              type="submit"
+              className="btn-primary chat-send-btn"
+              disabled={isLoading || inputMessage.trim().length === 0}
+            >
+              {isLoading ? "Sending..." : "Send"}
             </button>
           </form>
         </motion.div>

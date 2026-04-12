@@ -33,5 +33,4 @@ async function getNutritionByFood(req, res) {
 
 module.exports = {
 	getNutritionByFood,
-	NUTRITION_UNAVAILABLE_MESSAGE,
 };

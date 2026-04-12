@@ -469,6 +469,36 @@ p {
   color: #6c647a;
 }
 
+.chat-suggestions {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chat-suggestion-btn {
+  border: 1px solid rgba(181, 174, 214, 0.44);
+  background: #ffffff;
+  color: #4d455b;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 7px 12px;
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.chat-suggestion-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: rgba(181, 174, 214, 0.62);
+  background: #f7f1ff;
+}
+
+.chat-suggestion-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.56;
+}
+
 .chatbot-interaction {
   margin-top: 14px;
   border-radius: 14px;
@@ -556,8 +586,136 @@ p {
   padding: 10px 12px;
 }
 
+.dashboard-myth-day-card {
+  margin-top: 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(215, 161, 192, 0.5);
+  background:
+    radial-gradient(circle at 88% 14%, rgba(255, 209, 230, 0.55) 0%, rgba(255, 209, 230, 0) 44%),
+    linear-gradient(155deg, #fff4f8 0%, #f7f0ff 58%, #fdf9ff 100%);
+  box-shadow: 0 12px 28px rgba(98, 76, 118, 0.14);
+  padding: 18px;
+}
+
+.dashboard-myth-day-label {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.dashboard-myth-day-label.myth {
+  background: rgba(255, 230, 240, 0.9);
+  border: 1px solid rgba(225, 144, 178, 0.48);
+  color: #8b4d6b;
+}
+
+.dashboard-myth-day-label.fact {
+  background: rgba(237, 230, 255, 0.92);
+  border: 1px solid rgba(160, 141, 214, 0.54);
+  color: #5a4d86;
+}
+
+.dashboard-myth-day-text {
+  margin: 10px 0 0;
+  color: #4f475f;
+  font-size: 0.97rem;
+  font-weight: 700;
+  line-height: 1.55;
+}
+
+.dashboard-myth-day-fact {
+  margin-top: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(181, 174, 214, 0.38);
+  background: rgba(255, 255, 255, 0.76);
+  padding: 12px;
+}
+
+.dashboard-myth-day-meta {
+  margin: 12px 0 0;
+  color: #6d6581;
+  font-size: 0.83rem;
+  font-weight: 700;
+}
+
+.dashboard-myth-day-source {
+  margin: 8px 0 0;
+  color: #817a93;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.dashboard-myth-day-loading,
+.dashboard-myth-day-error {
+  margin: 8px 0 0;
+  color: #5f576f;
+  font-weight: 700;
+}
+
+.dashboard-myth-day-error {
+  color: #91516d;
+}
+
 .dashboard-calendar-wrap {
   margin-top: 16px;
+}
+
+.dashboard-period-prompt-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  background: rgba(42, 34, 56, 0.46);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+
+.dashboard-period-prompt-card {
+  width: min(460px, 100%);
+  border-radius: 16px;
+  border: 1px solid rgba(181, 174, 214, 0.42);
+  background: linear-gradient(165deg, #fffefd 0%, #f9fbff 100%);
+  box-shadow: 0 16px 34px rgba(43, 35, 58, 0.24);
+  padding: 16px;
+}
+
+.dashboard-period-prompt-kicker {
+  margin: 0;
+  color: #766d88;
+  font-size: 0.73rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.dashboard-period-prompt-card h3 {
+  margin: 7px 0 0;
+  color: #413a50;
+}
+
+.dashboard-period-prompt-copy {
+  margin: 10px 0 0;
+  color: #615974;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.dashboard-period-prompt-actions {
+  margin-top: 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.dashboard-period-prompt-actions .btn-primary,
+.dashboard-period-prompt-actions .calendar-day-ghost-btn {
+  width: 100%;
+  min-height: 42px;
 }
 
 .dashboard-insights-card {
@@ -576,6 +734,31 @@ p {
   background: #ffffff;
   box-shadow: 0 10px 24px rgba(85, 76, 101, 0.08);
   padding: 16px;
+}
+
+.dashboard-countdown-card {
+  margin-top: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(170, 196, 225, 0.45);
+  background:
+    radial-gradient(circle at 14% 12%, rgba(214, 232, 255, 0.42) 0%, rgba(214, 232, 255, 0) 45%),
+    radial-gradient(circle at 86% 85%, rgba(255, 233, 241, 0.44) 0%, rgba(255, 233, 241, 0) 48%),
+    #ffffff;
+  box-shadow: 0 10px 24px rgba(85, 76, 101, 0.08);
+  padding: 16px;
+}
+
+.dashboard-countdown-line {
+  margin: 8px 0 0;
+  color: #4f475f;
+  font-weight: 700;
+}
+
+.dashboard-approx-note {
+  margin: 10px 0 0;
+  color: #7d6177;
+  font-size: 0.84rem;
+  font-weight: 700;
 }
 
 .dashboard-stats-grid {
@@ -621,7 +804,10 @@ p {
 .dashboard-calendar-card {
   border-radius: 14px;
   border: 1px solid rgba(181, 174, 214, 0.34);
-  background: #ffffff;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(216, 233, 255, 0.38) 0%, rgba(216, 233, 255, 0) 42%),
+    radial-gradient(circle at 90% 92%, rgba(255, 229, 241, 0.4) 0%, rgba(255, 229, 241, 0) 44%),
+    #ffffff;
   box-shadow: 0 10px 24px rgba(85, 76, 101, 0.08);
   padding: 16px;
 }
@@ -694,11 +880,43 @@ p {
   font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 5px 6px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .calendar-day:hover {
   transform: translateY(-1px);
+}
+
+.calendar-day-number {
+  line-height: 1;
+}
+
+.calendar-day-indicators {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.calendar-day-mood-indicator {
+  font-size: 0.66rem;
+}
+
+.calendar-day-symptom-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(176, 166, 207, 0.54);
+  color: #6f6883;
+  font-size: 0.55rem;
 }
 
 .calendar-day.outside-month {
@@ -706,33 +924,69 @@ p {
 }
 
 .calendar-day.phase-menstrual {
-  background: #ffe7f0;
-  border-color: #f4bfd5;
+  background: #ffe8e8;
+  border-color: #efb4b4;
 }
 
 .calendar-day.phase-follicular {
-  background: #eaf4ff;
-  border-color: #c7ddf9;
+  background: #e8f1ff;
+  border-color: #b8cffa;
 }
 
 .calendar-day.phase-ovulation {
-  background: #ede1ff;
-  border-color: #ccb5f4;
+  background: #e9f9ee;
+  border-color: #aedbbe;
 }
 
 .calendar-day.phase-luteal {
-  background: #fff8d8;
-  border-color: #f0e0a1;
+  background: #fff8d7;
+  border-color: #eedf9d;
 }
 
 .calendar-day.period-strong {
-  border-color: #e1a2bf;
-  box-shadow: inset 0 0 0 2px rgba(189, 91, 139, 0.24);
+  border-color: #dc8f8f;
+  box-shadow: inset 0 0 0 2px rgba(197, 88, 88, 0.26);
+}
+
+.calendar-day.period-user-ongoing {
+  background: #f8c2ce;
+  border-color: #c85f79;
+  box-shadow: inset 0 0 0 1px rgba(156, 52, 80, 0.26);
+}
+
+.calendar-day.period-user-completed {
+  background: #fdeff3;
+  border-color: #e6b8c4;
+  box-shadow: inset 0 0 0 1px rgba(186, 121, 141, 0.2);
 }
 
 .calendar-day.ovulation-strong {
-  border-color: #aa8fe0;
-  box-shadow: inset 0 0 0 2px rgba(137, 109, 203, 0.32), 0 4px 10px rgba(137, 109, 203, 0.22);
+  border-color: #66bb84;
+  box-shadow: inset 0 0 0 2px rgba(84, 173, 113, 0.28), 0 4px 10px rgba(84, 173, 113, 0.2);
+}
+
+.calendar-day.fertile-day {
+  box-shadow: inset 0 0 0 1px rgba(117, 187, 139, 0.34);
+}
+
+.calendar-day.event-next-period {
+  border-style: dotted;
+  border-width: 2px;
+  border-color: rgba(205, 111, 146, 0.8);
+  background: #fff1f6;
+}
+
+.calendar-day.event-ovulation {
+  border-style: dotted;
+  border-width: 2px;
+  border-color: rgba(74, 165, 106, 0.84);
+  background: #ecfbf1;
+}
+
+.calendar-day.event-fertile-window {
+  border-style: dotted;
+  border-width: 2px;
+  border-color: rgba(106, 172, 130, 0.72);
 }
 
 .calendar-day.today-day {
@@ -758,6 +1012,46 @@ p {
   font-size: 0.8rem;
 }
 
+.legend-event {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  border: 2px dotted transparent;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.legend-event.next {
+  border-color: rgba(205, 111, 146, 0.8);
+  background: #fff1f6;
+}
+
+.legend-event.ovulation {
+  border-color: rgba(74, 165, 106, 0.84);
+  background: #ecfbf1;
+}
+
+.legend-event.fertile {
+  border-color: rgba(106, 172, 130, 0.72);
+  background: #f2fbf4;
+}
+
+.legend-period {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+}
+
+.legend-period.ongoing {
+  background: #f8c2ce;
+  border-color: #c85f79;
+}
+
+.legend-period.completed {
+  background: #fdeff3;
+  border-color: #e6b8c4;
+}
+
 .legend-dot {
   width: 10px;
   height: 10px;
@@ -766,23 +1060,23 @@ p {
 }
 
 .legend-dot.menstrual {
-  background: #ffe7f0;
-  border-color: #f4bfd5;
+  background: #ffe8e8;
+  border-color: #efb4b4;
 }
 
 .legend-dot.follicular {
-  background: #eaf4ff;
-  border-color: #c7ddf9;
+  background: #e8f1ff;
+  border-color: #b8cffa;
 }
 
 .legend-dot.ovulation {
-  background: #ede1ff;
-  border-color: #ccb5f4;
+  background: #e9f9ee;
+  border-color: #aedbbe;
 }
 
 .legend-dot.luteal {
-  background: #fff8d8;
-  border-color: #f0e0a1;
+  background: #fff8d7;
+  border-color: #eedf9d;
 }
 
 .calendar-selection-box,
@@ -821,33 +1115,49 @@ p {
 }
 
 .calendar-chip.period {
-  background: #ffe7f0;
-  border-color: #f6cadb;
+  background: #ffe8e8;
+  border-color: #efb4b4;
+}
+
+.calendar-chip.period-user-ongoing-chip {
+  background: #f8c2ce;
+  border-color: #c85f79;
+  color: #6b2c40;
+}
+
+.calendar-chip.period-user-completed-chip {
+  background: #fdeff3;
+  border-color: #e6b8c4;
 }
 
 .calendar-chip.ovulation {
-  background: #efe9fb;
-  border-color: #d6c7ef;
+  background: #e9f9ee;
+  border-color: #aedbbe;
+}
+
+.calendar-chip.fertile {
+  background: #ecf9ef;
+  border-color: #bee2c8;
 }
 
 .calendar-chip.phase-menstrual-chip {
-  background: #ffe7f0;
-  border-color: #f4bfd5;
+  background: #ffe8e8;
+  border-color: #efb4b4;
 }
 
 .calendar-chip.phase-follicular-chip {
-  background: #eaf4ff;
-  border-color: #c7ddf9;
+  background: #e8f1ff;
+  border-color: #b8cffa;
 }
 
 .calendar-chip.phase-ovulation-chip {
-  background: #ede1ff;
-  border-color: #ccb5f4;
+  background: #e9f9ee;
+  border-color: #aedbbe;
 }
 
 .calendar-chip.phase-luteal-chip {
-  background: #fff8d8;
-  border-color: #f0e0a1;
+  background: #fff8d7;
+  border-color: #eedf9d;
 }
 
 .calendar-chip.today {
@@ -865,10 +1175,249 @@ p {
   margin-top: 5px;
 }
 
+.calendar-prediction-approx-note {
+  margin-top: 7px;
+  color: #7d6177;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
 .calendar-empty-state {
   margin-top: 12px;
   color: #7e768d;
   font-size: 0.88rem;
+}
+
+.calendar-day-panel-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(45, 36, 62, 0.34);
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px;
+  animation: calendar-panel-fade 0.2s ease;
+}
+
+.calendar-day-panel {
+  width: min(420px, 100%);
+  height: 100%;
+  background: linear-gradient(165deg, #fffefd 0%, #f9fbff 100%);
+  border-radius: 18px;
+  border: 1px solid rgba(181, 174, 214, 0.4);
+  box-shadow: 0 16px 34px rgba(43, 35, 58, 0.22);
+  padding: 16px;
+  overflow: auto;
+  animation: calendar-panel-slide 0.24s ease;
+}
+
+@keyframes calendar-panel-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes calendar-panel-slide {
+  from {
+    transform: translateX(16px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.calendar-day-panel-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.calendar-day-panel-kicker {
+  margin: 0;
+  color: #766d88;
+  font-size: 0.73rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.calendar-day-panel-top h4 {
+  margin: 5px 0 0;
+  color: #413a50;
+}
+
+.calendar-day-panel-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  border: 1px solid rgba(181, 174, 214, 0.5);
+  background: #fff;
+  color: #5a506f;
+  cursor: pointer;
+}
+
+.calendar-day-detail-grid {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.calendar-day-detail-item,
+.calendar-day-log-row {
+  border-radius: 12px;
+  border: 1px solid rgba(181, 174, 214, 0.34);
+  background: #fff;
+  padding: 10px;
+}
+
+.calendar-day-log-row {
+  margin-top: 10px;
+}
+
+.calendar-day-detail-label {
+  margin: 0;
+  color: #756c86;
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.calendar-day-detail-value {
+  margin: 5px 0 0;
+  color: #4a425a;
+  font-weight: 700;
+}
+
+.calendar-day-symptom-tags {
+  margin-top: 7px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.calendar-day-actions {
+  margin-top: 14px;
+  display: grid;
+  gap: 8px;
+}
+
+.calendar-day-actions .btn-primary {
+  min-height: 42px;
+}
+
+.calendar-quick-section {
+  margin-top: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(181, 174, 214, 0.34);
+  background: #fff;
+  padding: 10px;
+}
+
+.calendar-quick-mood-grid {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.calendar-quick-mood-btn {
+  border: 1px solid rgba(181, 174, 214, 0.46);
+  border-radius: 9px;
+  background: #fff;
+  color: #514a62;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 6px 5px;
+  cursor: pointer;
+}
+
+.calendar-quick-mood-btn.active {
+  border-color: rgba(108, 84, 180, 0.64);
+  background: linear-gradient(135deg, #f2eaff 0%, #fff0f7 100%);
+}
+
+.calendar-quick-save-btn {
+  margin-top: 8px;
+  width: 100%;
+  min-height: 36px;
+  border-radius: 10px;
+  border: 1px solid rgba(181, 174, 214, 0.5);
+  background: #fff;
+  color: #504862;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.calendar-quick-save-btn:hover {
+  background: #faf7ff;
+}
+
+.calendar-quick-symptom-row {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.calendar-quick-symptom-chip {
+  border: 1px solid rgba(181, 174, 214, 0.46);
+  border-radius: 999px;
+  background: #fff;
+  color: #5f566f;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.calendar-quick-symptom-chip.active {
+  border-color: rgba(108, 84, 180, 0.64);
+  background: #f2efff;
+}
+
+.calendar-insight-section {
+  background: linear-gradient(155deg, rgba(243, 240, 255, 0.52), rgba(255, 247, 252, 0.55));
+}
+
+.calendar-day-ghost-btn {
+  width: 100%;
+  min-height: 40px;
+  border-radius: 10px;
+  border: 1px solid rgba(181, 174, 214, 0.5);
+  background: #fff;
+  color: #514a62;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.calendar-day-ghost-btn:hover {
+  background: #faf7ff;
+}
+
+.calendar-day-ghost-btn:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.calendar-day-ghost-btn:disabled {
+  opacity: 0.58;
+  cursor: not-allowed;
+}
+
+.calendar-day-subtle {
+  margin: 10px 0 0;
+  color: #685f79;
+  font-size: 0.84rem;
 }
 
 .dashboard-actions {
@@ -977,6 +1526,12 @@ p {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 4px var(--focus-ring);
+}
+
+.chat-input:disabled {
+  cursor: not-allowed;
+  background: #f4f1f8;
+  color: #80788d;
 }
 
 .form-group .input-error {
@@ -1406,6 +1961,51 @@ p {
   border-color: rgba(181, 174, 214, 0.34);
 }
 
+.symptom-pain-field {
+  gap: 10px;
+}
+
+.symptom-pain-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.symptom-pain-slider {
+  width: 100%;
+  accent-color: #9f8dc4;
+}
+
+.symptom-pain-value {
+  min-width: 38px;
+  text-align: center;
+  border-radius: 10px;
+  border: 1px solid rgba(181, 174, 214, 0.45);
+  background: #f4effc;
+  color: #4f4760;
+  font-size: 0.88rem;
+  font-weight: 800;
+  padding: 4px 8px;
+}
+
+.symptom-pain-value.mild {
+  background: #eef7ef;
+  border-color: rgba(140, 196, 153, 0.55);
+  color: #2f6340;
+}
+
+.symptom-pain-value.moderate {
+  background: #fff5e9;
+  border-color: rgba(231, 186, 120, 0.55);
+  color: #855214;
+}
+
+.symptom-pain-value.severe {
+  background: #ffecee;
+  border-color: rgba(222, 128, 136, 0.55);
+  color: #8f2f38;
+}
+
 .disclaimer-text {
   margin-top: 10px;
   color: #80788e;
@@ -1423,6 +2023,112 @@ p {
   border: 1px solid rgba(181, 174, 214, 0.36);
   background: linear-gradient(180deg, #fffefe 0%, #fcf9ff 100%);
   box-shadow: 0 10px 22px rgba(85, 76, 101, 0.08);
+}
+
+.symptom-analysis-overview {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.symptom-metric-card {
+  border-radius: 12px;
+  border: 1px solid rgba(181, 174, 214, 0.34);
+  background: #ffffff;
+  padding: 10px 12px;
+}
+
+.symptom-metric-label {
+  margin: 0;
+  color: #7a718c;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.symptom-severity-badge,
+.symptom-risk-badge {
+  margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 5px 10px;
+}
+
+.symptom-severity-badge.mild {
+  background: #edf8ef;
+  color: #2f6a42;
+  border-color: rgba(137, 191, 150, 0.6);
+}
+
+.symptom-severity-badge.moderate {
+  background: #fff5e9;
+  color: #855214;
+  border-color: rgba(231, 186, 120, 0.55);
+}
+
+.symptom-severity-badge.severe {
+  background: #ffecee;
+  color: #8f2f38;
+  border-color: rgba(222, 128, 136, 0.55);
+}
+
+.symptom-risk-badge.low {
+  background: #edf8ef;
+  color: #2f6a42;
+  border-color: rgba(137, 191, 150, 0.6);
+}
+
+.symptom-risk-badge.medium {
+  background: #fff5e9;
+  color: #855214;
+  border-color: rgba(231, 186, 120, 0.55);
+}
+
+.symptom-risk-badge.high {
+  background: #ffecee;
+  color: #8f2f38;
+  border-color: rgba(222, 128, 136, 0.55);
+}
+
+.symptom-warning-banner {
+  margin-top: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(231, 186, 120, 0.6);
+  background: linear-gradient(160deg, #fff7ea 0%, #fff4e4 100%);
+  padding: 10px 12px;
+}
+
+.symptom-warning-banner.high {
+  border-color: rgba(222, 128, 136, 0.65);
+  background: linear-gradient(160deg, #fff0f2 0%, #ffe7ea 100%);
+}
+
+.symptom-warning-title {
+  margin: 0;
+  color: #8a4f1a;
+  font-size: 0.85rem;
+}
+
+.symptom-warning-banner.high .symptom-warning-title {
+  color: #8f2f38;
+}
+
+.symptom-warning-list {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  color: #7b5f3a;
+  display: grid;
+  gap: 6px;
+}
+
+.symptom-warning-banner.high .symptom-warning-list {
+  color: #7a3b43;
 }
 
 .symptom-tags-row {
@@ -1470,6 +2176,141 @@ p {
 
 .symptom-result-list {
   margin-top: 8px;
+}
+
+.symptom-suggestion-grid {
+  margin-top: 8px;
+  display: grid;
+  gap: 8px;
+}
+
+.symptom-suggestion-card {
+  border-radius: 10px;
+  border: 1px solid rgba(181, 174, 214, 0.32);
+  background: linear-gradient(180deg, #ffffff 0%, #fbf9ff 100%);
+  padding: 10px;
+}
+
+.symptom-suggestion-text {
+  margin: 0;
+  color: #5b536b;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.symptom-trend-card {
+  margin-top: 14px;
+}
+
+.symptom-trend-subtitle {
+  margin-top: 6px;
+  color: #6f667f;
+  font-size: 0.86rem;
+}
+
+.symptom-trend-grid {
+  margin-top: 12px;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.symptom-trend-panel {
+  border-radius: 12px;
+  border: 1px solid rgba(181, 174, 214, 0.32);
+  background: #ffffff;
+  padding: 12px;
+}
+
+.symptom-frequency-list {
+  margin-top: 8px;
+  display: grid;
+  gap: 8px;
+}
+
+.symptom-frequency-row {
+  display: grid;
+  grid-template-columns: 94px 1fr auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.symptom-frequency-label {
+  color: #554d64;
+  font-size: 0.81rem;
+  font-weight: 700;
+}
+
+.symptom-frequency-track {
+  height: 9px;
+  border-radius: 999px;
+  background: #f2edf9;
+  overflow: hidden;
+}
+
+.symptom-frequency-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #cdb4db 0%, #ffc8dd 100%);
+}
+
+.symptom-frequency-count {
+  color: #5b526b;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.symptom-pain-chart-wrap {
+  margin-top: 8px;
+}
+
+.symptom-pain-svg {
+  width: 100%;
+  height: 140px;
+  display: block;
+  border-radius: 10px;
+  border: 1px solid rgba(181, 174, 214, 0.28);
+  background: linear-gradient(180deg, #fefcff 0%, #faf7ff 100%);
+  padding: 8px;
+}
+
+.symptom-pain-gridline {
+  stroke: rgba(181, 174, 214, 0.35);
+  stroke-width: 0.5;
+}
+
+.symptom-pain-line {
+  stroke: #8c6fb8;
+  stroke-width: 2.2;
+}
+
+.symptom-pain-point {
+  fill: #8c6fb8;
+}
+
+.symptom-trend-average {
+  margin-top: 8px;
+  color: #5c536c;
+  font-size: 0.85rem;
+}
+
+.symptom-trend-average strong {
+  color: #3f3850;
+}
+
+.symptom-trend-axis {
+  margin-top: 8px;
+  display: flex;
+  justify-content: space-between;
+  color: #7f778e;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.symptom-trend-empty {
+  margin-top: 8px;
+  color: #7d748b;
+  font-size: 0.86rem;
 }
 
 .sub-section-title {
@@ -1521,6 +2362,61 @@ p {
   background: #ffffff;
 }
 
+.chat-typing-bubble {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.typing-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.typing-indicator span {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #8b82a0;
+  animation: chat-typing-bounce 1s infinite ease-in-out;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.chat-typing-text {
+  color: #6e6680;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+@keyframes chat-typing-bounce {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+
+  40% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
+}
+
+.chat-loading-state {
+  margin-top: 10px;
+  color: #6b637b;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
 .chat-form {
   margin-top: 10px;
   display: flex;
@@ -1538,10 +2434,331 @@ p {
 .chat-send-btn {
   min-width: 94px;
   background: linear-gradient(135deg, #f6d3e4 0%, #d0bee8 100%);
+  transition: filter 0.2s ease, opacity 0.2s ease;
 }
 
 .chat-send-btn:hover {
   filter: brightness(0.97);
+}
+
+.chat-send-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+  filter: none;
+}
+
+.mood-page-card {
+  border: 1px solid rgba(188, 176, 221, 0.45);
+  background:
+    radial-gradient(circle at 12% 10%, rgba(216, 232, 255, 0.48) 0%, rgba(216, 232, 255, 0) 42%),
+    radial-gradient(circle at 88% 90%, rgba(255, 222, 238, 0.52) 0%, rgba(255, 222, 238, 0) 44%),
+    linear-gradient(165deg, #fbf7ff 0%, #fffafe 100%);
+}
+
+.mood-form-layout {
+  margin-top: 8px;
+}
+
+.mood-emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.mood-emoji-btn {
+  border: 1px solid rgba(186, 174, 220, 0.5);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.82);
+  color: #5b5370;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 10px 8px;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.mood-emoji-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(122, 101, 189, 0.62);
+}
+
+.mood-emoji-btn.selected {
+  background: linear-gradient(135deg, #f0e9ff 0%, #ffeef7 100%);
+  border-color: rgba(112, 90, 181, 0.72);
+}
+
+.mood-emoji {
+  font-size: 1.25rem;
+}
+
+.mood-emoji-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.mood-intensity-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 12px;
+}
+
+.mood-intensity-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mood-intensity-row input[type="range"] {
+  flex: 1;
+}
+
+.mood-intensity-value {
+  min-width: 34px;
+  text-align: center;
+  border-radius: 999px;
+  border: 1px solid rgba(181, 174, 214, 0.55);
+  background: #fff;
+  color: #584f6d;
+  font-weight: 800;
+  padding: 4px 8px;
+}
+
+.mood-current-selection {
+  border-radius: 12px;
+  border: 1px solid rgba(181, 174, 214, 0.4);
+  background: rgba(255, 255, 255, 0.8);
+  padding: 10px;
+}
+
+.mood-current-selection p {
+  margin: 0;
+  color: #4e465f;
+  font-weight: 700;
+}
+
+.mood-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.mood-success {
+  color: #3f8052;
+  font-weight: 700;
+  margin: 0;
+}
+
+.mood-history-section {
+  margin-top: 18px;
+}
+
+.mood-trend-card {
+  margin-top: 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(181, 174, 214, 0.35);
+  background:
+    radial-gradient(circle at 16% 12%, rgba(208, 226, 255, 0.4) 0%, rgba(208, 226, 255, 0) 42%),
+    radial-gradient(circle at 86% 84%, rgba(255, 224, 238, 0.44) 0%, rgba(255, 224, 238, 0) 45%),
+    rgba(255, 255, 255, 0.9);
+  box-shadow: 0 8px 18px rgba(89, 78, 112, 0.08);
+  padding: 14px;
+}
+
+.mood-trend-chart-wrap {
+  margin-top: 10px;
+  min-height: 260px;
+  border-radius: 12px;
+  border: 1px solid rgba(181, 174, 214, 0.34);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 10px;
+}
+
+.mood-phase-legend {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mood-phase-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(181, 174, 214, 0.4);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #5b5370;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 5px 10px;
+}
+
+.mood-phase-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85);
+}
+
+.mood-history-list {
+  margin-top: 10px;
+  display: grid;
+  gap: 10px;
+}
+
+.mood-history-item {
+  border-radius: 12px;
+  border: 1px solid rgba(181, 174, 214, 0.34);
+  background: rgba(255, 255, 255, 0.84);
+  box-shadow: 0 8px 18px rgba(89, 78, 112, 0.08);
+  padding: 12px;
+}
+
+.mood-history-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.mood-history-heading {
+  margin: 0;
+  color: #4e465f;
+  font-weight: 800;
+}
+
+.mood-history-date {
+  margin: 0;
+  color: #786f8b;
+  font-size: 0.79rem;
+  font-weight: 700;
+  background: rgba(244, 239, 255, 0.86);
+  border: 1px solid rgba(190, 181, 222, 0.62);
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+
+.mood-history-meta {
+  margin: 6px 0 0;
+  color: #6a627d;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.mood-history-note {
+  margin: 8px 0 0;
+  color: #5b546f;
+  line-height: 1.45;
+}
+
+.mood-analysis-card {
+  margin-top: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(181, 174, 214, 0.35);
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 8px 18px rgba(89, 78, 112, 0.08);
+  padding: 14px;
+}
+
+.mood-analysis-line {
+  margin: 8px 0 0;
+  color: #534c66;
+}
+
+.mood-current-highlight {
+  margin-top: 10px;
+  border: 1px solid rgba(178, 166, 219, 0.55);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(236, 229, 255, 0.68) 0%, rgba(255, 239, 247, 0.72) 100%);
+  padding: 10px 12px;
+}
+
+.mood-current-kicker {
+  margin: 0;
+  color: #5f5577;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.mood-current-text {
+  margin: 6px 0 0;
+  color: #4d4563;
+  font-weight: 700;
+}
+
+.mood-frequency-grid {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.mood-frequency-item {
+  border-radius: 10px;
+  border: 1px solid rgba(181, 174, 214, 0.34);
+  background: #fff;
+  padding: 8px;
+}
+
+.mood-frequency-label {
+  margin: 0;
+  color: #625a75;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.mood-frequency-count {
+  margin: 6px 0 0;
+  color: #4f4762;
+  font-weight: 800;
+}
+
+.mood-insights-block {
+  margin-top: 12px;
+}
+
+.mood-insights-kicker {
+  margin: 0;
+  color: #5e5572;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.mood-insights-block ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
+  color: #5c546f;
+  display: grid;
+  gap: 6px;
+}
+
+.mood-suggestions-block {
+  border: 1px solid rgba(170, 204, 181, 0.62);
+  border-radius: 12px;
+  background: linear-gradient(145deg, rgba(237, 252, 242, 0.84) 0%, rgba(249, 255, 251, 0.92) 100%);
+  padding: 10px 12px;
+}
+
+.mood-alert-block {
+  margin-top: 12px;
+  border: 1px solid rgba(229, 150, 150, 0.58);
+  border-radius: 12px;
+  background: linear-gradient(155deg, rgba(255, 240, 240, 0.9) 0%, rgba(255, 249, 249, 0.96) 100%);
+  box-shadow: 0 6px 16px rgba(201, 116, 116, 0.12);
+  padding: 10px 12px;
+}
+
+.mood-alert-block p {
+  margin: 0;
+  color: #8a4b5a;
+  font-weight: 700;
+}
+
+.mood-alert-block p + p {
+  margin-top: 6px;
 }
 
 .education-intro {
@@ -1551,36 +2768,240 @@ p {
   max-width: 65ch;
 }
 
+.myths-module {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(208, 188, 228, 0.46);
+  background:
+    radial-gradient(circle at 86% 8%, rgba(255, 214, 231, 0.56) 0%, rgba(255, 214, 231, 0) 40%),
+    radial-gradient(circle at 10% 94%, rgba(214, 230, 255, 0.45) 0%, rgba(214, 230, 255, 0) 42%),
+    linear-gradient(165deg, #fff9fc 0%, #fcf8ff 56%, #f6fbff 100%);
+}
+
+.myths-module::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.36), rgba(255, 255, 255, 0.08));
+  pointer-events: none;
+}
+
+.myths-module > * {
+  position: relative;
+  z-index: 1;
+}
+
+.myth-category-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.myth-search-row {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 14px;
+  max-width: 420px;
+}
+
+.myth-search-label {
+  color: #635a77;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.myth-search-input {
+  width: 100%;
+  border: 1px solid rgba(181, 174, 214, 0.5);
+  border-radius: 10px;
+  padding: 9px 12px;
+  background: #fff;
+  color: #4d465f;
+  font-size: 0.92rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.myth-search-input::placeholder {
+  color: #9b93ac;
+}
+
+.myth-search-input:focus {
+  outline: none;
+  border-color: rgba(108, 84, 180, 0.72);
+  box-shadow: 0 0 0 3px rgba(108, 84, 180, 0.14);
+}
+
+.myth-mode-switch {
+  display: inline-flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.myth-mode-btn {
+  border: 1px solid rgba(186, 169, 214, 0.5);
+  border-radius: 999px;
+  padding: 7px 12px;
+  background: rgba(255, 255, 255, 0.84);
+  color: #5b5270;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.myth-mode-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(128, 109, 188, 0.52);
+}
+
+.myth-mode-btn.active {
+  background: linear-gradient(135deg, #ffeef6 0%, #f1eaff 100%);
+  border-color: rgba(108, 84, 180, 0.72);
+  color: #4c3d79;
+}
+
+.myth-category-tab {
+  border: 1px solid rgba(186, 169, 214, 0.5);
+  border-radius: 999px;
+  padding: 7px 12px;
+  background: rgba(255, 255, 255, 0.84);
+  color: #5b5270;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.myth-category-tab:hover {
+  transform: translateY(-1px);
+  border-color: rgba(128, 109, 188, 0.52);
+}
+
+.myth-category-tab.active {
+  background: linear-gradient(135deg, #ffeef6 0%, #ece5ff 100%);
+  border-color: rgba(108, 84, 180, 0.72);
+  color: #4c3d79;
+}
+
+.myths-status {
+  margin: 4px 0 14px;
+  color: #625b73;
+  font-weight: 600;
+}
+
+.myth-personalization-note {
+  margin: 0 0 14px;
+  color: #6f6784;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.myths-status-error {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #8a4d66;
+}
+
+.myths-status-error p {
+  margin: 0;
+}
+
+.myths-retry-btn {
+  border: 1px solid rgba(190, 153, 175, 0.64);
+  border-radius: 999px;
+  background: #fff;
+  color: #7a4f63;
+  font-weight: 700;
+  padding: 5px 11px;
+  cursor: pointer;
+}
+
+.myths-retry-btn:hover {
+  background: #fff6fa;
+}
+
 .myth-fact-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 16px;
 }
 
 .myth-fact-card {
-  border-radius: 14px;
-  border: 1px solid rgba(181, 174, 214, 0.34);
-  background: #ffffff;
-  box-shadow: 0 10px 22px rgba(85, 76, 101, 0.08);
+  border-radius: 18px;
+  position: relative;
+  min-height: 340px;
+  perspective: 1200px;
+}
+
+.myth-fact-flip-btn {
+  width: 100%;
+  height: 100%;
+  min-height: 340px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 18px;
+  text-align: left;
+}
+
+.myth-fact-flip-btn:focus-visible {
+  outline: 2px solid rgba(108, 84, 180, 0.7);
+  outline-offset: 2px;
+}
+
+.myth-fact-flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 340px;
+  transform-style: preserve-3d;
+  transition: transform 0.62s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+.myth-fact-card.is-flipped .myth-fact-flip-inner {
+  transform: rotateY(180deg);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .myth-fact-card:hover .myth-fact-flip-inner {
+    transform: rotateY(180deg);
+  }
+}
+
+.myth-fact-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   padding: 14px;
-  display: grid;
-  gap: 10px;
+  box-shadow: 0 8px 18px rgba(94, 82, 118, 0.11);
+  display: flex;
+  flex-direction: column;
+}
+
+.fact-block.myth-fact-face {
+  transform: rotateY(180deg);
 }
 
 .myth-block,
 .fact-block {
-  border-radius: 12px;
-  padding: 11px;
+  border-radius: 18px;
+  padding: 14px;
 }
 
 .myth-block {
-  background: linear-gradient(160deg, #fff4f8 0%, #fef7fa 100%);
-  border: 1px solid rgba(255, 200, 221, 0.62);
+  background: linear-gradient(155deg, #fff4f8 0%, #fef9fb 100%);
+  border: 1px solid rgba(241, 188, 212, 0.66);
 }
 
 .fact-block {
-  background: linear-gradient(160deg, #f8f4ff 0%, #fcf9ff 100%);
-  border: 1px solid rgba(181, 174, 214, 0.45);
+  background: linear-gradient(155deg, #f4f0ff 0%, #fbf8ff 100%);
+  border: 1px solid rgba(186, 174, 223, 0.58);
 }
 
 .myth-fact-kicker {
@@ -1588,15 +3009,15 @@ p {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.77rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: #9c5b76;
+  color: #8d4e67;
 }
 
 .myth-fact-kicker.fact {
-  color: #625485;
+  color: #5a4c80;
 }
 
 .myth-fact-icon {
@@ -1607,16 +3028,199 @@ p {
 .fact-label {
   line-height: 1.45;
   margin-top: 8px;
+  margin-bottom: 0;
 }
 
 .myth-label {
-  font-weight: 700;
+  font-weight: 800;
   margin-bottom: 0;
-  color: #65435a;
+  color: #63455a;
 }
 
 .fact-label {
-  color: #564f64;
+  color: #544d63;
+}
+
+.myth-source-note {
+  margin: 8px 0 0;
+  color: #847d95;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.myth-feedback-actions {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.myth-feedback-btn {
+  border: 1px solid rgba(181, 174, 214, 0.48);
+  border-radius: 999px;
+  background: #fff;
+  color: #5f5673;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.myth-feedback-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: rgba(128, 109, 188, 0.58);
+}
+
+.myth-feedback-btn.selected {
+  background: #efe8ff;
+  border-color: rgba(108, 84, 180, 0.72);
+}
+
+.myth-feedback-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.78;
+}
+
+.myth-feedback-ack {
+  margin: 9px 0 0;
+  color: #6e6582;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.myth-quiz-card {
+  border-radius: 14px;
+  border: 1px solid rgba(181, 174, 214, 0.4);
+  background: linear-gradient(165deg, #fffafc 0%, #fbf8ff 100%);
+  box-shadow: 0 10px 22px rgba(85, 76, 101, 0.08);
+  padding: 16px;
+}
+
+.myth-quiz-score {
+  margin: 0 0 10px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 4px 10px;
+  background: #f4efff;
+  border: 1px solid rgba(181, 174, 214, 0.52);
+  color: #514772;
+  font-size: 0.83rem;
+  font-weight: 700;
+}
+
+.myth-quiz-question {
+  margin: 2px 0 10px;
+  color: #554a72;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+.myth-quiz-statement {
+  margin: 0;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(190, 177, 220, 0.5);
+  background: #fff;
+  color: #4f4960;
+  font-weight: 600;
+  line-height: 1.55;
+}
+
+.myth-quiz-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+}
+
+.myth-quiz-answer-btn {
+  border: 1px solid rgba(181, 174, 214, 0.5);
+  border-radius: 10px;
+  padding: 8px 14px;
+  background: #fff;
+  color: #584f6d;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.myth-quiz-answer-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: rgba(128, 109, 188, 0.58);
+}
+
+.myth-quiz-answer-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.myth-quiz-answer-btn.selected {
+  background: #efe8ff;
+  border-color: rgba(108, 84, 180, 0.72);
+}
+
+.myth-quiz-feedback {
+  margin-top: 14px;
+  border-radius: 12px;
+  padding: 12px;
+  animation: myth-feedback-fade 0.28s ease;
+}
+
+.myth-quiz-feedback.correct {
+  background: #f2fbf4;
+  border: 1px solid rgba(119, 189, 132, 0.52);
+}
+
+.myth-quiz-feedback.incorrect {
+  background: #fff4f7;
+  border: 1px solid rgba(215, 138, 164, 0.55);
+}
+
+.myth-quiz-result {
+  margin: 0;
+  font-weight: 800;
+  color: #4d445f;
+}
+
+.myth-quiz-correct-answer,
+.myth-quiz-explanation,
+.myth-quiz-source {
+  margin: 8px 0 0;
+  color: #5d556f;
+}
+
+.myth-quiz-source {
+  font-size: 0.86rem;
+  color: #6d6581;
+}
+
+.myth-quiz-next-btn {
+  margin-top: 12px;
+  border: 1px solid rgba(108, 84, 180, 0.6);
+  border-radius: 999px;
+  background: linear-gradient(135deg, #f5ebff 0%, #ebe3ff 100%);
+  color: #4c3d79;
+  font-weight: 700;
+  padding: 7px 12px;
+  cursor: pointer;
+}
+
+.myth-quiz-next-btn:hover {
+  filter: brightness(0.98);
+}
+
+@keyframes myth-feedback-fade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .link-row {
@@ -1688,15 +3292,81 @@ p {
     grid-template-columns: 1fr;
   }
 
+  .dashboard-countdown-card {
+    padding: 14px;
+  }
+
   .dashboard-stats-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .calendar-day {
     min-height: 32px;
+    padding: 4px 5px;
+  }
+
+  .calendar-day-indicators {
+    gap: 1px;
+  }
+
+  .calendar-quick-mood-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .symptom-result-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .myths-status-error {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .myth-fact-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .myth-fact-card,
+  .myth-fact-flip-btn,
+  .myth-fact-flip-inner {
+    min-height: 320px;
+  }
+
+  .myth-quiz-actions {
+    flex-wrap: wrap;
+  }
+
+  .myth-search-row {
+    max-width: 100%;
+  }
+
+  .mood-emoji-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .mood-intensity-grid,
+  .mood-meta-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mood-frequency-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .mood-trend-chart-wrap {
+    min-height: 230px;
+  }
+
+  .mood-history-top-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .symptom-analysis-overview {
+    grid-template-columns: 1fr;
+  }
+
+  .symptom-trend-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -1752,9 +3422,45 @@ p {
     gap: 5px;
   }
 
+  .calendar-day-panel-overlay {
+    padding: 10px;
+    justify-content: center;
+  }
+
+  .calendar-day-panel {
+    width: min(560px, 100%);
+  }
+
   .calendar-day {
     min-height: 30px;
     font-size: 0.78rem;
+    padding: 4px 4px;
+  }
+
+  .calendar-day-number {
+    font-size: 0.76rem;
+  }
+
+  .calendar-day-mood-indicator {
+    font-size: 0.62rem;
+  }
+
+  .calendar-day-symptom-indicator {
+    width: 10px;
+    height: 10px;
+  }
+
+  .calendar-day-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-quick-mood-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .calendar-quick-mood-btn {
+    font-size: 0.72rem;
+    padding: 6px 4px;
   }
 
   .button-row .btn-primary,
@@ -1771,8 +3477,60 @@ p {
     padding: 10px;
   }
 
+  .chat-suggestions {
+    gap: 6px;
+  }
+
+  .chat-suggestion-btn {
+    width: 100%;
+    text-align: left;
+  }
+
   .chat-send-btn {
     width: 100%;
+  }
+
+  .mood-emoji-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mood-frequency-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mood-trend-chart-wrap {
+    min-height: 210px;
+    padding: 8px;
+  }
+
+  .mood-phase-legend-item {
+    font-size: 0.74rem;
+    padding: 4px 9px;
+  }
+
+  .myth-fact-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .myth-fact-card,
+  .myth-fact-flip-btn,
+  .myth-fact-flip-inner {
+    min-height: 340px;
+  }
+
+  .symptom-frequency-row {
+    grid-template-columns: 80px 1fr auto;
+  }
+
+  .calendar-day-panel-overlay {
+    padding: 0;
+  }
+
+  .calendar-day-panel {
+    width: 100%;
+    border-radius: 0;
+    height: 100%;
+    border: 0;
   }
 }
 

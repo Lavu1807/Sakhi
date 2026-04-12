@@ -8,6 +8,7 @@ import CycleTracker from "./pages/CycleTracker";
 import Dashboard from "./pages/Dashboard";
 import Education from "./pages/Education";
 import Login from "./pages/Login";
+import MoodTracker from "./pages/MoodTracker";
 import Nutrition from "./pages/Nutrition";
 import Signup from "./pages/Signup";
 import Symptoms from "./pages/Symptoms";
@@ -27,6 +28,7 @@ const ESSENTIAL_NAV_ITEMS = [
 
 const MORE_NAV_ITEMS = [
   { to: "/symptoms", label: "Symptoms" },
+  { to: "/mood", label: "Mood" },
   { to: "/education", label: "Education" },
 ];
 
@@ -234,6 +236,14 @@ function App() {
             element={
               <RequireAuth>
                 <Education />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/mood"
+            element={
+              <RequireAuth>
+                <MoodTracker />
               </RequireAuth>
             }
           />

@@ -59,10 +59,48 @@ export function getCycleHistory(token) {
   });
 }
 
-export function getPrediction(token, defaultCycleLength) {
-  const suffix = Number.isFinite(defaultCycleLength)
-    ? `?defaultCycleLength=${encodeURIComponent(String(defaultCycleLength))}`
-    : "";
+export function getCycleStatus(token) {
+  return request("/cycle/status", {
+    method: "GET",
+    token,
+  });
+}
+
+export function markPeriodEnd(payload, token) {
+  return request("/cycle/end", {
+    method: "PATCH",
+    body: payload,
+    token,
+  });
+}
+
+export function getPrediction(token, options = {}) {
+  const query = new URLSearchParams();
+  let defaultCycleLength;
+  let from;
+  let to;
+
+  if (typeof options === "number") {
+    defaultCycleLength = options;
+  } else if (options && typeof options === "object") {
+    defaultCycleLength = options.defaultCycleLength;
+    from = options.from;
+    to = options.to;
+  }
+
+  if (Number.isFinite(defaultCycleLength)) {
+    query.set("defaultCycleLength", String(defaultCycleLength));
+  }
+
+  if (from) {
+    query.set("from", String(from));
+  }
+
+  if (to) {
+    query.set("to", String(to));
+  }
+
+  const suffix = query.toString() ? `?${query.toString()}` : "";
 
   return request(`/prediction${suffix}`, {
     method: "GET",
@@ -97,9 +135,102 @@ export function getDailyLogs(token, { from, to } = {}) {
   });
 }
 
+export async function getDailyLogForDate(token, date) {
+  const response = await getDailyLogs(token, {
+    from: date,
+    to: date,
+  });
+
+  if (!Array.isArray(response?.entries) || response.entries.length === 0) {
+    return null;
+  }
+
+  return response.entries[0];
+}
+
+export function addMoodEntry(payload, token) {
+  return request("/mood", {
+    method: "POST",
+    body: payload,
+    token,
+  });
+}
+
+export function getMoodEntries(token, { from, to, phase, limit } = {}) {
+  const query = new URLSearchParams();
+
+  if (from) {
+    query.set("from", from);
+  }
+
+  if (to) {
+    query.set("to", to);
+  }
+
+  if (phase) {
+    query.set("phase", phase);
+  }
+
+  if (limit !== undefined && limit !== null && limit !== "") {
+    query.set("limit", String(limit));
+  }
+
+  const suffix = query.toString() ? `?${query.toString()}` : "";
+
+  return request(`/mood${suffix}`, {
+    method: "GET",
+    token,
+  });
+}
+
 export function getFoodNutrition(food, token) {
   return request(`/nutrition/${encodeURIComponent(food)}`, {
     method: "GET",
+    token,
+  });
+}
+
+export function getMyths(category, { phase, symptoms } = {}) {
+  const query = new URLSearchParams();
+
+  if (category && category !== "All") {
+    query.set("category", category);
+  }
+
+  if (phase && String(phase).trim()) {
+    query.set("phase", String(phase).trim());
+  }
+
+  if (Array.isArray(symptoms) && symptoms.length > 0) {
+    query.set("symptoms", symptoms.join(","));
+  } else if (typeof symptoms === "string" && symptoms.trim()) {
+    query.set("symptoms", symptoms.trim());
+  }
+
+  const suffix = query.toString() ? `?${query.toString()}` : "";
+
+  return request(`/myths${suffix}`, {
+    method: "GET",
+  });
+}
+
+export function getRandomMyth() {
+  return request("/myths/random", {
+    method: "GET",
+  });
+}
+
+export function sendMythFeedback(payload) {
+  return request("/myths/feedback", {
+    method: "POST",
+    body: payload,
+  });
+}
+
+export function sendChatMessage(payload, token) {
+  return request("/chat", {
+    method: "POST",
+    body: payload,
     token,
   });
 }

@@ -178,6 +178,19 @@ async function addDailyLog(req, res) {
 				notes
 			)
 			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+			ON CONFLICT (user_id, log_date)
+			DO UPDATE SET
+				mood = COALESCE(EXCLUDED.mood, daily_logs.mood),
+				energy_level = COALESCE(EXCLUDED.energy_level, daily_logs.energy_level),
+				stress_level = COALESCE(EXCLUDED.stress_level, daily_logs.stress_level),
+				sleep_hours = COALESCE(EXCLUDED.sleep_hours, daily_logs.sleep_hours),
+				cramps = COALESCE(EXCLUDED.cramps, daily_logs.cramps),
+				headache = COALESCE(EXCLUDED.headache, daily_logs.headache),
+				fatigue = COALESCE(EXCLUDED.fatigue, daily_logs.fatigue),
+				bloating = COALESCE(EXCLUDED.bloating, daily_logs.bloating),
+				water_intake = COALESCE(EXCLUDED.water_intake, daily_logs.water_intake),
+				exercise_done = COALESCE(EXCLUDED.exercise_done, daily_logs.exercise_done),
+				notes = COALESCE(EXCLUDED.notes, daily_logs.notes)
 			RETURNING id, user_id, log_date, mood, energy_level, stress_level, sleep_hours, cramps, headache, fatigue, bloating, water_intake, exercise_done, notes, created_at
 		`;
 
@@ -207,12 +220,6 @@ async function addDailyLog(req, res) {
 			},
 		});
 	} catch (error) {
-		if (error.code === "23505") {
-			return res.status(409).json({
-				message: "A daily log already exists for this date.",
-			});
-		}
-
 		if (error.code === "23514") {
 			return res.status(400).json({
 				message: "One or more fields are out of allowed range.",

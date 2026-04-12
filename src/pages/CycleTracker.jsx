@@ -6,19 +6,55 @@ import { staggerItem, staggerParent } from "../components/motionPresets";
 import { addCycleEntry, getCycleHistory, getPrediction } from "../utils/api";
 import { getAuthToken } from "../utils/auth";
 import {
-  addDays,
+  formatDateRange,
   formatDisplayDate,
-  getCurrentPhase,
-  parseInputDate,
   readCycleData,
   saveCycleData,
 } from "../utils/cycleUtils";
 
+function isValidISODate(value) {
+  return /^\d{4}-\d{2}-\d{2}$/.test(String(value || "").trim());
+}
+
+function parsePastPeriodDates(input) {
+  if (!input || typeof input !== "string") {
+    return [];
+  }
+
+  const candidates = input
+    .split(/[\n,\s]+/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  const uniqueDates = Array.from(new Set(candidates)).filter((item) => isValidISODate(item));
+  return uniqueDates.sort();
+}
+
+function mapInputMethodLabel(value) {
+  const normalized = String(value || "").trim().toLowerCase();
+
+  if (normalized === "multiple-period-dates") {
+    return "Multiple Past Dates";
+  }
+
+  if (normalized === "last-period-and-cycle-length") {
+    return "Last Period + Cycle Length";
+  }
+
+  if (normalized === "direct-calendar-mark") {
+    return "Calendar Marking";
+  }
+
+  return "Last Period Date";
+}
+
 export default function CycleTracker() {
   const [lastDate, setLastDate] = useState("");
   const [cycleLength, setCycleLength] = useState("");
+  const [pastPeriodDatesInput, setPastPeriodDatesInput] = useState("");
   const [result, setResult] = useState(null);
   const [history, setHistory] = useState([]);
+  const [inputMethod, setInputMethod] = useState("");
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -65,25 +101,26 @@ export default function CycleTracker() {
     event.preventDefault();
 
     const validationErrors = {};
-    const cycleLengthNumber = Number(cycleLength.trim());
+    const parsedPastDates = parsePastPeriodDates(pastPeriodDatesInput);
+    const hasMultiplePastDates = parsedPastDates.length >= 2;
+    const cycleLengthValue = cycleLength.trim();
+    const cycleLengthNumber = cycleLengthValue ? Number(cycleLengthValue) : null;
 
-    if (!lastDate) {
-      validationErrors.lastDate = "Please select your last period date.";
+    if (!hasMultiplePastDates && !lastDate) {
+      validationErrors.lastDate = "Provide last period date or at least 2 past dates.";
     }
 
-    if (!cycleLength || Number.isNaN(cycleLengthNumber) || cycleLengthNumber <= 0) {
+    if (cycleLengthValue && (!Number.isFinite(cycleLengthNumber) || cycleLengthNumber <= 0)) {
       validationErrors.cycleLength = "Cycle length must be a positive number.";
+    }
+
+    if (pastPeriodDatesInput.trim().length > 0 && parsedPastDates.length < 2 && !lastDate) {
+      validationErrors.pastPeriodDates = "Add at least 2 valid dates (YYYY-MM-DD) for multiple-date input.";
     }
 
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length > 0) {
-      return;
-    }
-
-    const lastPeriodDate = parseInputDate(lastDate);
-    if (!lastPeriodDate) {
-      setErrors({ lastDate: "Please select a valid date." });
       return;
     }
 
@@ -97,36 +134,50 @@ export default function CycleTracker() {
     setIsSubmitting(true);
 
     try {
-      await addCycleEntry(
-        {
-          period_start_date: lastDate,
-        },
-        token,
-      );
+      const payload = hasMultiplePastDates
+        ? {
+            period_start_dates: Array.from(new Set([...(lastDate ? [lastDate] : []), ...parsedPastDates])).sort(),
+            cycle_length: Number.isFinite(cycleLengthNumber) ? Math.round(cycleLengthNumber) : undefined,
+          }
+        : {
+            period_start_date: lastDate,
+            cycle_length: Number.isFinite(cycleLengthNumber) ? Math.round(cycleLengthNumber) : undefined,
+          };
 
-      const prediction = await getPrediction(token, cycleLengthNumber);
-      const adaptiveCycleLength = Number(prediction.averageCycleLength || cycleLengthNumber);
-      const nextPeriodDate = prediction.nextPeriodDate
-        ? parseInputDate(prediction.nextPeriodDate)
-        : addDays(lastPeriodDate, adaptiveCycleLength);
-      const ovulationDate = prediction.ovulationDate ? parseInputDate(prediction.ovulationDate) : addDays(nextPeriodDate, -14);
-      const currentPhase = prediction.currentPhase || getCurrentPhase(lastPeriodDate, adaptiveCycleLength);
+      const addEntryResponse = await addCycleEntry(payload, token);
+
+      const predictionFallbackLength = Number.isFinite(cycleLengthNumber)
+        ? Math.round(cycleLengthNumber)
+        : Number.isFinite(Number(addEntryResponse?.initialCycleLengthEstimate))
+          ? Number(addEntryResponse.initialCycleLengthEstimate)
+          : undefined;
+
+      const prediction = await getPrediction(token, {
+        defaultCycleLength: predictionFallbackLength,
+      });
+
       const currentDay = Number.isFinite(Number(prediction.currentDay)) ? Number(prediction.currentDay) : "";
       const ovulationDay = Number.isFinite(Number(prediction.ovulationDay)) ? Number(prediction.ovulationDay) : "";
       const cycleLengthUsed = Number.isFinite(Number(prediction.cycleLengthUsed))
         ? Number(prediction.cycleLengthUsed)
-        : adaptiveCycleLength;
+        : "";
       const cycleCount = Number.isFinite(Number(prediction.cycleCount)) ? Number(prediction.cycleCount) : "";
       const phaseMessage = typeof prediction.phaseMessage === "string" ? prediction.phaseMessage : "";
-      const nextPeriodIso = nextPeriodDate.toISOString();
-      const ovulationIso = ovulationDate.toISOString();
+
+      setInputMethod(mapInputMethodLabel(addEntryResponse?.inputMethod));
 
       saveCycleData({
-        lastDate,
-        cycleLength: adaptiveCycleLength,
-        nextPeriod: nextPeriodIso,
-        ovulationDate: ovulationIso,
-        currentPhase,
+        lastDate: prediction.latestPeriodDate || lastDate,
+        cycleLength: Number.isFinite(Number(prediction.averageCycleLength))
+          ? Number(prediction.averageCycleLength)
+          : cycleLength,
+        nextPeriod: prediction.nextPeriodDate || "",
+        ovulationDate: prediction.ovulationDate || "",
+        fertileWindowStart: prediction.fertileWindowStart || "",
+        fertileWindowEnd: prediction.fertileWindowEnd || "",
+        isApproximatePrediction: Boolean(prediction.isApproximatePrediction),
+        predictionMode: typeof prediction.predictionMode === "string" ? prediction.predictionMode : "",
+        currentPhase: prediction.currentPhase || "",
         currentDay,
         ovulationDay,
         cycleLengthUsed,
@@ -138,9 +189,12 @@ export default function CycleTracker() {
       });
 
       setResult({
-        nextPeriodDate: nextPeriodIso,
-        ovulationDate: ovulationIso,
-        currentPhase,
+        nextPeriodDate: prediction.nextPeriodDate || "",
+        ovulationDate: prediction.ovulationDate || "",
+        fertileWindowStart: prediction.fertileWindowStart || "",
+        fertileWindowEnd: prediction.fertileWindowEnd || "",
+        isApproximatePrediction: Boolean(prediction.isApproximatePrediction),
+        currentPhase: prediction.currentPhase || "",
         currentDay,
         ovulationDay,
         cycleLengthUsed,
@@ -171,7 +225,12 @@ export default function CycleTracker() {
         </motion.h2>
 
         <motion.p className="cycle-intro" variants={staggerItem}>
-          Add your latest period date and average cycle length to calculate upcoming milestones.
+          Enter cycle data in the format that works best for you. Adaptive prediction stays the source of truth.
+        </motion.p>
+
+        <motion.p className="section-intro compact" variants={staggerItem}>
+          Option 1: Last period date + cycle length. Option 2: Multiple past period dates. Option 3: Direct date marking in
+          dashboard calendar.
         </motion.p>
 
         <motion.form onSubmit={handleCalculate} className="form-layout cycle-form" variants={staggerParent}>
@@ -188,6 +247,22 @@ export default function CycleTracker() {
               className={errors.lastDate ? "input-error" : ""}
             />
             {errors.lastDate && <p className="field-error">{errors.lastDate}</p>}
+          </motion.div>
+
+          <motion.div className="form-group cycle-field" variants={staggerItem}>
+            <label htmlFor="past-period-dates">Past Period Start Dates (optional)</label>
+            <textarea
+              id="past-period-dates"
+              rows="3"
+              value={pastPeriodDatesInput}
+              onChange={(event) => {
+                setPastPeriodDatesInput(event.target.value);
+                setErrors((prev) => ({ ...prev, pastPeriodDates: "" }));
+              }}
+              className={errors.pastPeriodDates ? "input-error" : ""}
+              placeholder="YYYY-MM-DD, YYYY-MM-DD, YYYY-MM-DD"
+            />
+            {errors.pastPeriodDates && <p className="field-error">{errors.pastPeriodDates}</p>}
           </motion.div>
 
           <motion.div className="form-group cycle-field" variants={staggerItem}>
@@ -250,6 +325,11 @@ export default function CycleTracker() {
             </article>
 
             <article className="tracker-highlight-item">
+              <p className="tracker-highlight-label">Fertile Window</p>
+              <p className="tracker-highlight-value">{formatDateRange(result.fertileWindowStart, result.fertileWindowEnd)}</p>
+            </article>
+
+            <article className="tracker-highlight-item">
               <p className="tracker-highlight-label">Current Phase</p>
               <p className="tracker-highlight-value">{result.currentPhase || "--"}</p>
             </article>
@@ -272,6 +352,16 @@ export default function CycleTracker() {
             <article className="tracker-highlight-item">
               <p className="tracker-highlight-label">Cycle Pattern</p>
               <p className="tracker-highlight-value">{result.irregularityFlag ? "Irregular" : "Regular"}</p>
+            </article>
+
+            <article className="tracker-highlight-item">
+              <p className="tracker-highlight-label">Input Mode</p>
+              <p className="tracker-highlight-value">{inputMethod || "--"}</p>
+            </article>
+
+            <article className="tracker-highlight-item">
+              <p className="tracker-highlight-label">Prediction Type</p>
+              <p className="tracker-highlight-value">{result.isApproximatePrediction ? "Approximate" : "Adaptive"}</p>
             </article>
           </div>
 
