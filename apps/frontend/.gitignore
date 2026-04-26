@@ -5,9 +5,6 @@ node_modules/
 dist/
 dist-ssr/
 
-# Test coverage
-coverage/
-
 # Environment files
 .env
 .env.*

@@ -1,0 +1,292 @@
+{
+  "phases": {
+    "Menstrual": {
+      "general": {
+        "nutrients": ["iron", "vitamin C", "omega-3", "electrolytes"],
+        "foods": [
+          "spinach dal",
+          "beetroot carrot juice",
+          "sesame jaggery ladoo",
+          "sardine curry",
+          "pomegranate",
+          "horse gram soup",
+          "ragi porridge",
+          "dates and figs"
+        ]
+      },
+      "symptoms": {
+        "fatigue": {
+          "nutrients": ["iron", "vitamin B12", "complex carbohydrates"],
+          "foods": [
+            "sprouted moong chaat",
+            "chicken liver masala",
+            "black chana sundal",
+            "amaranth khichdi",
+            "quinoa vegetable pulao",
+            "roasted makhana trail mix"
+          ]
+        },
+        "cramps": {
+          "nutrients": ["magnesium", "omega-3", "vitamin E"],
+          "foods": [
+            "pumpkin seed chutney",
+            "flaxseed yogurt bowl",
+            "ginger turmeric tea",
+            "salmon stew",
+            "banana peanut smoothie",
+            "dark chocolate 70 percent"
+          ]
+        },
+        "headache": {
+          "nutrients": ["hydration", "riboflavin", "potassium"],
+          "foods": [
+            "coconut water",
+            "cucumber mint raita",
+            "boiled potatoes with herbs",
+            "watermelon cubes",
+            "buttermilk with cumin",
+            "almond date shake"
+          ]
+        },
+        "nausea": {
+          "nutrients": ["vitamin B6", "gingerol", "sodium"],
+          "foods": [
+            "ginger lemon infusion",
+            "plain khichdi",
+            "baked sweet potato wedges",
+            "salted rice crackers",
+            "apple cinnamon stew",
+            "mint coriander soup"
+          ]
+        },
+        "heavy flow": {
+          "nutrients": ["iron", "folate", "vitamin K"],
+          "foods": [
+            "moringa leaf curry",
+            "rajma with brown rice",
+            "kidney bean patties",
+            "broccoli sesame stir fry",
+            "blackstrap molasses drink",
+            "garden cress seed milk"
+          ]
+        }
+      }
+    },
+    "Follicular": {
+      "general": {
+        "nutrients": ["protein", "probiotics", "B vitamins", "antioxidants"],
+        "foods": [
+          "greek yogurt parfait",
+          "tofu bhurji",
+          "edamame salad",
+          "avocado toast with seeds",
+          "mixed berry bowl",
+          "idli with sambar",
+          "millet upma",
+          "paneer tikka"
+        ]
+      },
+      "symptoms": {
+        "low appetite": {
+          "nutrients": ["zinc", "B vitamins", "digestive enzymes"],
+          "foods": [
+            "pineapple ginger salad",
+            "papaya lime bowl",
+            "miso soup",
+            "roasted fennel carrots",
+            "lemon pepper fish",
+            "curd rice with pomegranate"
+          ]
+        },
+        "brain fog": {
+          "nutrients": ["choline", "omega-3", "polyphenols"],
+          "foods": [
+            "boiled eggs",
+            "walnut pesto pasta",
+            "chia berry pudding",
+            "mackerel grill",
+            "matcha oat latte",
+            "beet hummus wrap"
+          ]
+        },
+        "acne": {
+          "nutrients": ["zinc", "vitamin A", "probiotics"],
+          "foods": [
+            "pumpkin seed sprinkle salad",
+            "carrot cucumber sticks",
+            "kefir smoothie",
+            "turmeric tofu scramble",
+            "tomato basil soup",
+            "guava slices"
+          ]
+        },
+        "constipation": {
+          "nutrients": ["fiber", "magnesium", "hydration"],
+          "foods": [
+            "oats chia porridge",
+            "pear with skin",
+            "prunes soaked overnight",
+            "lentil vegetable stew",
+            "psyllium husk drink",
+            "kiwi fruit bowl"
+          ]
+        },
+        "low mood": {
+          "nutrients": ["tryptophan", "vitamin B6", "omega-3"],
+          "foods": [
+            "turkey spinach sandwich",
+            "banana walnut oatmeal",
+            "sunflower seed granola",
+            "chickpea spinach curry",
+            "tuna salad roll",
+            "cocoa tahini dip"
+          ]
+        }
+      }
+    },
+    "Ovulation": {
+      "general": {
+        "nutrients": ["antioxidants", "fiber", "lean protein", "hydration"],
+        "foods": [
+          "citrus fruit platter",
+          "grilled zucchini salad",
+          "quinoa tabbouleh",
+          "cottage cheese bowl",
+          "poached cod",
+          "tomato cucumber gazpacho",
+          "basil pesto millet",
+          "tender coconut malai"
+        ]
+      },
+      "symptoms": {
+        "bloating": {
+          "nutrients": ["potassium", "digestive enzymes", "probiotics"],
+          "foods": [
+            "fennel seed tea",
+            "asparagus stir fry",
+            "pineapple mint smoothie",
+            "kimchi rice bowl",
+            "celery apple juice",
+            "dill yogurt dip"
+          ]
+        },
+        "breast tenderness": {
+          "nutrients": ["vitamin E", "magnesium", "vitamin B6"],
+          "foods": [
+            "almond butter toast",
+            "hazelnut cocoa spread",
+            "spinach mushroom omelette",
+            "sesame tahini noodles",
+            "chickpea flour cheela",
+            "pistachio snack pack"
+          ]
+        },
+        "water retention": {
+          "nutrients": ["potassium", "vitamin B6", "low sodium minerals"],
+          "foods": [
+            "baked pumpkin cubes",
+            "white bean salad",
+            "banana oat pancakes",
+            "cantaloupe wedges",
+            "parsley lemon quinoa",
+            "unsalted roasted peanuts"
+          ]
+        },
+        "sugar cravings": {
+          "nutrients": ["chromium", "protein", "fiber"],
+          "foods": [
+            "cinnamon apple oats",
+            "peanut chikki no sugar",
+            "roasted chickpea snack",
+            "ricotta berry cups",
+            "hummus veggie boats",
+            "buckwheat crepes"
+          ]
+        },
+        "skin sensitivity": {
+          "nutrients": ["vitamin C", "omega-3", "zinc"],
+          "foods": [
+            "orange bell pepper salad",
+            "chia flax crackers",
+            "sardine tomato toast",
+            "pumpkin soup with seeds",
+            "kiwi strawberry salsa",
+            "cashew cilantro dip"
+          ]
+        }
+      }
+    },
+    "Luteal": {
+      "general": {
+        "nutrients": ["complex carbohydrates", "magnesium", "calcium", "vitamin B6"],
+        "foods": [
+          "sweet potato chaat",
+          "whole wheat pasta primavera",
+          "sesame tofu bowl",
+          "yogurt chia parfait",
+          "moong dal dosa",
+          "barley vegetable soup",
+          "roasted lotus seeds",
+          "apple peanut slices"
+        ]
+      },
+      "symptoms": {
+        "mood swings": {
+          "nutrients": ["magnesium", "omega-3", "vitamin B6"],
+          "foods": [
+            "dark cocoa oats",
+            "sardine spinach pasta",
+            "banana sesame smoothie",
+            "cashew raisin trail mix",
+            "quinoa black bean bowl",
+            "chamomile cacao drink"
+          ]
+        },
+        "insomnia": {
+          "nutrients": ["melatonin", "magnesium", "calcium"],
+          "foods": [
+            "tart cherry juice",
+            "warm turmeric milk",
+            "pumpkin oatmeal cookies",
+            "tofu sesame stir fry",
+            "poppy seed kheer",
+            "lentil spinach soup"
+          ]
+        },
+        "cravings": {
+          "nutrients": ["chromium", "protein", "fiber"],
+          "foods": [
+            "roasted soy nuts",
+            "pear cinnamon crumble",
+            "peanut butter stuffed dates",
+            "greek yogurt fruit dip",
+            "chickpea avocado toast",
+            "millet granola bars"
+          ]
+        },
+        "bloating": {
+          "nutrients": ["potassium", "probiotics", "hydration"],
+          "foods": [
+            "bottle gourd soup",
+            "plain kefir drink",
+            "cucumber dill salad",
+            "steamed green beans",
+            "orange fennel salad",
+            "jeera ajwain water"
+          ]
+        },
+        "acne flare": {
+          "nutrients": ["zinc", "vitamin A", "anti inflammatory fats"],
+          "foods": [
+            "carrot beet soup",
+            "grilled trout",
+            "pumpkin seed pesto",
+            "kale chickpea salad",
+            "turmeric ginger broth",
+            "red cabbage slaw"
+          ]
+        }
+      }
+    }
+  }
+}
