@@ -31,7 +31,19 @@ async function createUser({ name, email, passwordHash, age, weight, height, life
 	return rows[0];
 }
 
+async function savePasswordResetToken(userId, token, expiresAt) {
+	const query = `
+		INSERT INTO password_reset_tokens (user_id, token, expires_at)
+		VALUES ($1, $2, $3)
+		RETURNING id, token
+	`;
+
+	const { rows } = await pool.query(query, [userId, token, expiresAt]);
+	return rows[0];
+}
+
 module.exports = {
 	findUserByEmail,
 	createUser,
+	savePasswordResetToken,
 };

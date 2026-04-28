@@ -86,6 +86,56 @@ CREATE TABLE IF NOT EXISTS symptom_logs (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Mood tracker entries (used by mood module)
+CREATE TABLE IF NOT EXISTS mood_entries (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  entry_date DATE NOT NULL,
+  mood VARCHAR(20) NOT NULL CHECK (mood IN ('happy', 'sad', 'irritated', 'anxious', 'calm')),
+  intensity INTEGER NOT NULL CHECK (intensity BETWEEN 1 AND 5),
+  note TEXT,
+  cycle_day INTEGER NOT NULL CHECK (cycle_day BETWEEN 1 AND 60),
+  phase VARCHAR(20) NOT NULL CHECK (phase IN ('Menstrual', 'Follicular', 'Ovulation', 'Luteal')),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE (user_id, entry_date)
+);
+
+ALTER TABLE mood_entries ADD COLUMN IF NOT EXISTS entry_date DATE;
+ALTER TABLE mood_entries ADD COLUMN IF NOT EXISTS mood VARCHAR(20);
+ALTER TABLE mood_entries ADD COLUMN IF NOT EXISTS intensity INTEGER;
+ALTER TABLE mood_entries ADD COLUMN IF NOT EXISTS note TEXT;
+ALTER TABLE mood_entries ADD COLUMN IF NOT EXISTS cycle_day INTEGER;
+ALTER TABLE mood_entries ADD COLUMN IF NOT EXISTS phase VARCHAR(20);
+ALTER TABLE mood_entries ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+-- Symptom tracker entries (used by symptom module)
+CREATE TABLE IF NOT EXISTS symptom_entries (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  entry_date DATE NOT NULL,
+  cycle_day INTEGER NOT NULL CHECK (cycle_day BETWEEN 1 AND 60),
+  phase VARCHAR(20) NOT NULL CHECK (phase IN ('Menstrual', 'Follicular', 'Ovulation', 'Luteal')),
+  pain_level INTEGER NOT NULL CHECK (pain_level BETWEEN 1 AND 10),
+  flow_level VARCHAR(10) NOT NULL CHECK (flow_level IN ('light', 'medium', 'heavy')),
+  mood VARCHAR(20) NOT NULL CHECK (mood IN ('happy', 'sad', 'irritated', 'anxious')),
+  symptoms TEXT[] NOT NULL DEFAULT '{}',
+  sleep_hours DOUBLE PRECISION NOT NULL CHECK (sleep_hours BETWEEN 0 AND 24),
+  activity_level VARCHAR(10) NOT NULL CHECK (activity_level IN ('low', 'moderate', 'high')),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE (user_id, entry_date)
+);
+
+ALTER TABLE symptom_entries ADD COLUMN IF NOT EXISTS entry_date DATE;
+ALTER TABLE symptom_entries ADD COLUMN IF NOT EXISTS cycle_day INTEGER;
+ALTER TABLE symptom_entries ADD COLUMN IF NOT EXISTS phase VARCHAR(20);
+ALTER TABLE symptom_entries ADD COLUMN IF NOT EXISTS pain_level INTEGER;
+ALTER TABLE symptom_entries ADD COLUMN IF NOT EXISTS flow_level VARCHAR(10);
+ALTER TABLE symptom_entries ADD COLUMN IF NOT EXISTS mood VARCHAR(20);
+ALTER TABLE symptom_entries ADD COLUMN IF NOT EXISTS symptoms TEXT[];
+ALTER TABLE symptom_entries ADD COLUMN IF NOT EXISTS sleep_hours DOUBLE PRECISION;
+ALTER TABLE symptom_entries ADD COLUMN IF NOT EXISTS activity_level VARCHAR(10);
+ALTER TABLE symptom_entries ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
 -- Durable USDA nutrition cache (replaces in-memory Map)
 CREATE TABLE IF NOT EXISTS nutrition_cache (
   cache_key VARCHAR(255) PRIMARY KEY,
@@ -108,5 +158,17 @@ CREATE INDEX IF NOT EXISTS idx_cycle_history_user_start_date ON cycle_history (u
 CREATE INDEX IF NOT EXISTS idx_cycle_history_user_ongoing ON cycle_history (user_id, is_period_ongoing);
 CREATE INDEX IF NOT EXISTS idx_daily_logs_user_log_date ON daily_logs (user_id, log_date DESC);
 CREATE INDEX IF NOT EXISTS idx_symptom_logs_user_date ON symptom_logs (user_id, date DESC);
+CREATE INDEX IF NOT EXISTS idx_mood_entries_user_entry_date ON mood_entries (user_id, entry_date DESC);
+CREATE INDEX IF NOT EXISTS idx_symptom_entries_user_entry_date ON symptom_entries (user_id, entry_date DESC);
 CREATE INDEX IF NOT EXISTS idx_nutrition_cache_expires ON nutrition_cache (expires_at);
 CREATE INDEX IF NOT EXISTS idx_conversation_memory_updated ON conversation_memory (updated_at DESC);
+
+-- Password reset tokens
+CREATE TABLE IF NOT EXISTS password_reset_tokens (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  token VARCHAR(255) NOT NULL,
+  expires_at TIMESTAMP NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_token ON password_reset_tokens (token);

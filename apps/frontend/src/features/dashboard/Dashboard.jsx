@@ -5,7 +5,7 @@ import CycleCalendar from "../cycle/CycleCalendar";
 import PageFrame from "../../shared/components/PageFrame";
 import { staggerItem, staggerParent } from "../../shared/utils/motionPresets";
 import { getCycleHistory, getCycleStatus, getPrediction, getRandomMyth, markPeriodEnd } from "../../shared/utils/api";
-import { clearAuthSession, getAuthToken, getAuthUser } from "../../shared/utils/auth";
+import { clearAllUserData, getAuthToken, getAuthUser } from "../../shared/utils/auth";
 import { formatDateRange, formatDisplayDate, readCycleData, saveCycleData } from "../cycle/cycleUtils";
 
 const MYTH_OF_DAY_STORAGE_KEY = "sakhi_myth_of_the_day";
@@ -255,7 +255,7 @@ export default function Dashboard() {
         setApiError("");
       } catch (error) {
         if (error.message === "Invalid or expired token.") {
-          clearAuthSession();
+          clearAllUserData();
           navigate("/", { replace: true });
           return;
         }
@@ -299,7 +299,7 @@ export default function Dashboard() {
         setPeriodPromptError("");
       } catch (error) {
         if (error.message === "Invalid or expired token.") {
-          clearAuthSession();
+          clearAllUserData();
           navigate("/", { replace: true });
           return;
         }
@@ -370,9 +370,11 @@ export default function Dashboard() {
   );
 
   const handleCycleLogged = useCallback(
-    (range) => {
-      refreshPrediction(range || {});
-      refreshCycleStatus({ allowPrompt: false });
+    async (range) => {
+      await Promise.all([
+        refreshPrediction(range || {}),
+        refreshCycleStatus({ allowPrompt: false }),
+      ]);
     },
     [refreshPrediction, refreshCycleStatus],
   );
@@ -519,11 +521,6 @@ export default function Dashboard() {
     };
   }, [cycleData.nextPeriod, cycleData.ovulationDate]);
 
-  function handleLogout() {
-    clearAuthSession();
-    navigate("/", { replace: true });
-  }
-
   function markPeriodPromptAnsweredToday() {
     const todayDateKey = getDateKey();
     setLastPromptDate(todayDateKey);
@@ -533,7 +530,7 @@ export default function Dashboard() {
   async function handleConfirmPeriodEnded() {
     const token = getAuthToken();
     if (!token) {
-      clearAuthSession();
+      clearAllUserData();
       navigate("/", { replace: true });
       return;
     }
@@ -556,7 +553,7 @@ export default function Dashboard() {
       await Promise.all([refreshPrediction(), refreshCycleStatus({ allowPrompt: false })]);
     } catch (error) {
       if (error.message === "Invalid or expired token.") {
-        clearAuthSession();
+        clearAllUserData();
         navigate("/", { replace: true });
         return;
       }
@@ -757,9 +754,6 @@ export default function Dashboard() {
           </button>
           <button type="button" className="btn-primary" onClick={() => navigate("/chatbot")}>
             Chat Support
-          </button>
-          <button type="button" className="btn-primary" onClick={handleLogout}>
-            Logout
           </button>
         </motion.div>
 

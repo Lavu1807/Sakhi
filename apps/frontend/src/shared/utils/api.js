@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api";
 
 async function request(path, { method = "GET", body, token } = {}) {
   const headers = {
@@ -9,22 +9,35 @@ async function request(path, { method = "GET", body, token } = {}) {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    method,
-    headers,
-    body: body ? JSON.stringify(body) : undefined,
-  });
-
-  let data = {};
+  let response;
 
   try {
-    data = await response.json();
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      method,
+      headers,
+      body: body ? JSON.stringify(body) : undefined,
+    });
+  } catch {
+    throw new Error("Failed to connect to server. Please check backend is running.");
+  }
+
+  let data = {};
+  const contentType = response.headers.get("content-type") || "";
+
+  try {
+    if (contentType.includes("application/json")) {
+      data = await response.json();
+    } else {
+      const text = await response.text();
+      data = text ? { message: text } : {};
+    }
   } catch {
     data = {};
   }
 
   if (!response.ok) {
-    throw new Error(data.message || "Something went wrong.");
+    const fallbackMessage = response.statusText || `Request failed (${response.status}).`;
+    throw new Error(data.message || fallbackMessage || "Something went wrong.");
   }
 
   return data;
@@ -39,6 +52,13 @@ export function signupUser(payload) {
 
 export function loginUser(payload) {
   return request("/auth/login", {
+    method: "POST",
+    body: payload,
+  });
+}
+
+export function forgotPassword(payload) {
+  return request("/auth/forgot-password", {
     method: "POST",
     body: payload,
   });
@@ -70,6 +90,21 @@ export function markPeriodEnd(payload, token) {
   return request("/cycle/end", {
     method: "PATCH",
     body: payload,
+    token,
+  });
+}
+
+export function updateCycleEntry(entryId, payload, token) {
+  return request(`/cycle/${entryId}`, {
+    method: "PATCH",
+    body: payload,
+    token,
+  });
+}
+
+export function deleteCycleEntry(entryId, token) {
+  return request(`/cycle/${entryId}`, {
+    method: "DELETE",
     token,
   });
 }

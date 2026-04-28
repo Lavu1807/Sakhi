@@ -1,11 +1,11 @@
 const { detectIntent } = require("./intentService");
 const { generateResponse } = require("./responseService");
 const { getGeminiResponse } = require("./geminiFallback");
-const { findRelevantMythForQuestion } = require("./mythsService");
+const { findRelevantMythForQuestion } = require("../myths/myths.service");
 const {
 	getGeminiCallCount,
 	incrementGeminiCallCount,
-} = require("./conversationMemoryService");
+} = require("./chat.memory");
 const {
 	MEDICAL_SAFETY_RESPONSE,
 	shouldUseMedicalSafetyResponse,
@@ -136,7 +136,7 @@ async function getHybridChatResponse(message, context, conversationKey) {
 	}
 
 	const sessionKey = conversationKey || "anonymous";
-	const currentGeminiCallCount = getGeminiCallCount(sessionKey);
+	const currentGeminiCallCount = await getGeminiCallCount(sessionKey);
 	if (currentGeminiCallCount >= GEMINI_CALL_LIMIT) {
 		return {
 			intent: "general",
@@ -145,7 +145,7 @@ async function getHybridChatResponse(message, context, conversationKey) {
 	}
 
 	const reply = await getGeminiResponse(message, context);
-	incrementGeminiCallCount(sessionKey);
+	await incrementGeminiCallCount(sessionKey);
 	return {
 		intent: "general",
 		reply: addMoodAwareEmpathy(reply, context),

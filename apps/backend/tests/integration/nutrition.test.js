@@ -13,7 +13,7 @@ jest.mock("../../src/config/db", () => {
 });
 
 // Mock the USDA service.
-jest.mock("../../src/services/usdaService", () => ({
+jest.mock("../../src/integrations/usda.integration", () => ({
 	getFoodNutrition: jest.fn(),
 }));
 

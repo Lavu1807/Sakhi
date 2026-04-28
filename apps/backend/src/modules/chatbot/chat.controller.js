@@ -51,11 +51,11 @@ async function postChatMessage(req, res) {
 			});
 		}
 
-		const previousMemory = getConversationMemory(conversationKey);
+		const previousMemory = await getConversationMemory(conversationKey);
 		const context = buildContext(req.body?.userContext, previousMemory);
 		const { intent: detectedIntent, reply } = await getHybridChatResponse(message, context, conversationKey);
 
-		const updatedMemory = updateConversationMemory(conversationKey, {
+		const updatedMemory = await updateConversationMemory(conversationKey, {
 			message,
 			intent: detectedIntent,
 		});

@@ -12,6 +12,10 @@ const cycleRoutes = require('./modules/cycle/cycle.routes');
 const dailyLogRoutes = require('./modules/daily-logs/dailyLog.routes');
 const nutritionRoutes = require('./modules/nutrition/nutrition.routes');
 const predictionRoutes = require('./modules/prediction/prediction.routes');
+const moodRoutes = require('./modules/mood/mood.routes');
+const symptomRoutes = require('./modules/symptoms/symptom.routes');
+const chatRoutes = require('./modules/chatbot/chat.routes');
+const mythsRoutes = require('./modules/myths/myths.routes');
 
 const pool = require('./config/db');
 
@@ -104,6 +108,11 @@ app.use("/api/daily-logs", dailyLogRoutes);
 app.use("/api/nutrition", nutritionRoutes);
 app.use("/api/prediction", predictionRoutes);
 
+app.use('/api/mood', moodRoutes);
+app.use('/api/symptoms', symptomRoutes);
+app.use('/api/chat', chatRoutes);
+app.use('/api/myths', mythsRoutes);
+
 app.use((req, res) => {
 	return res.status(404).json({
 		message: "Route not found.",
@@ -123,16 +132,5 @@ app.use((error, req, res, next) => {
 		requestId,
 	});
 });
-
-
-const moodRoutes = require('./modules/mood/mood.routes');
-const symptomRoutes = require('./modules/symptoms/symptom.routes');
-const chatRoutes = require('./modules/chatbot/chat.routes');
-const mythsRoutes = require('./modules/myths/myths.routes');
-
-app.use('/api/mood', moodRoutes);
-app.use('/api/symptoms', symptomRoutes);
-app.use('/api/chat', chatRoutes);
-app.use('/api/myths', mythsRoutes);
 
 module.exports = app;

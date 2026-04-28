@@ -1,18 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import gsap from "gsap";
-import { BrowserRouter, Navigate, NavLink, Outlet, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter, Navigate, NavLink, Outlet, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import AnimatedBackdrop from "./shared/components/AnimatedBackdrop";
 import Chatbot from "./features/chatbot/Chatbot";
 import CycleTracker from "./features/cycle/CycleTracker";
 import Dashboard from "./features/dashboard/Dashboard";
 import Education from "./features/education/Education";
 import Login from "./features/auth/Login";
+import ForgotPassword from "./features/auth/ForgotPassword";
 import MoodTracker from "./features/mood/MoodTracker";
 import Nutrition from "./features/nutrition/Nutrition";
 import Signup from "./features/auth/Signup";
 import Symptoms from "./features/symptoms/Symptoms";
-import { getAuthToken } from "./shared/utils/auth";
+import { clearAllUserData, getAuthToken } from "./shared/utils/auth";
 
 const AUTH_NAV_ITEMS = [
   { to: "/", label: "Login", end: true },
@@ -34,6 +35,7 @@ const MORE_NAV_ITEMS = [
 
 function AppLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
   const navRef = useRef(null);
   const moreMenuRef = useRef(null);
   const [isMoreOpen, setIsMoreOpen] = useState(false);
@@ -43,6 +45,13 @@ function AppLayout() {
   const isAuthRoute = location.pathname === "/" || location.pathname === "/signup";
   const navItems = isAuthRoute ? AUTH_NAV_ITEMS : ESSENTIAL_NAV_ITEMS;
   const getNavClass = ({ isActive }) => (isActive ? "nav-link active" : "nav-link");
+  const isAuthenticated = Boolean(getAuthToken());
+  const showLogout = !isAuthRoute && isAuthenticated;
+
+  function handleLogout() {
+    clearAllUserData();
+    navigate("/", { replace: true });
+  }
 
   useEffect(() => {
     setIsMoreOpen(false);
@@ -134,6 +143,12 @@ function AppLayout() {
                     )}
                   </div>
                 )}
+
+                {showLogout && (
+                  <button type="button" className="nav-link nav-logout" onClick={handleLogout}>
+                    Logout
+                  </button>
+                )}
               </div>
             </nav>
           </motion.header>
@@ -196,6 +211,14 @@ function App() {
             element={
               <RedirectIfAuthenticated>
                 <Signup />
+              </RedirectIfAuthenticated>
+            }
+          />
+          <Route
+            path="/forgot-password"
+            element={
+              <RedirectIfAuthenticated>
+                <ForgotPassword />
               </RedirectIfAuthenticated>
             }
           />

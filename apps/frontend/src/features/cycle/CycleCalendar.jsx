@@ -1,6 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import PropTypes from "prop-types";
-import { addCycleEntry, addDailyLog, getCycleStatus, getDailyLogForDate, getDailyLogs, markPeriodEnd } from "../../shared/utils/api";
+import {
+  addCycleEntry,
+  addDailyLog,
+  deleteCycleEntry,
+  getCycleStatus,
+  getDailyLogForDate,
+  getDailyLogs,
+  markPeriodEnd,
+  updateCycleEntry,
+} from "../../shared/utils/api";
 import { getAuthToken } from "../../shared/utils/auth";
 import { addDays, formatDisplayDate } from "./cycleUtils";
 import { saveMoodChatContext } from "../mood/moodContext";
@@ -276,6 +285,38 @@ function resolveHistoricalPattern(phase, dailyLogMap, predictionByDate) {
   return "Your logs in this phase are balanced so far.";
 }
 
+function getEntryRange(entry, todayKey) {
+  const startDate = String(entry?.period_start_date || "").slice(0, 10);
+  const endDateRaw = String(entry?.period_end_date || "").slice(0, 10);
+  const isOngoing = Boolean(entry?.is_period_ongoing) && !isValidISODateKey(endDateRaw);
+  const endDate = isOngoing ? todayKey : endDateRaw;
+  if (!isValidISODateKey(startDate) || !isValidISODateKey(endDate)) {
+    return null;
+  }
+
+  return {
+    startDate,
+    endDate,
+    isOngoing,
+  };
+}
+
+function findEntryByDate(cycleHistory, dateKey, todayKey) {
+  const entries = Array.isArray(cycleHistory) ? cycleHistory : [];
+  for (const entry of entries) {
+    const range = getEntryRange(entry, todayKey);
+    if (!range) {
+      continue;
+    }
+
+    if (dateKey >= range.startDate && dateKey <= range.endDate) {
+      return entry;
+    }
+  }
+
+  return null;
+}
+
 function getCalendarGridDays(viewDate) {
   const monthStart = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1);
   const gridStart = addDays(monthStart, -monthStart.getDay());
@@ -323,6 +364,11 @@ export default function CycleCalendar({ predictionData, cycleHistory, onPredicti
   const [isSavingMood, setIsSavingMood] = useState(false);
   const [isSavingSymptoms, setIsSavingSymptoms] = useState(false);
   const [isMarkingPeriodEnd, setIsMarkingPeriodEnd] = useState(false);
+  const [isUpdatingPeriodEntry, setIsUpdatingPeriodEntry] = useState(false);
+  const [isDeletingPeriodEntry, setIsDeletingPeriodEntry] = useState(false);
+  const [editPeriodStartDate, setEditPeriodStartDate] = useState("");
+  const [editPeriodEndDate, setEditPeriodEndDate] = useState("");
+  const [editPeriodError, setEditPeriodError] = useState("");
   const [quickMood, setQuickMood] = useState("");
   const [quickSymptoms, setQuickSymptoms] = useState(() => createEmptySymptomSelection());
   const [ongoingPeriodStatus, setOngoingPeriodStatus] = useState(null);
@@ -342,6 +388,10 @@ export default function CycleCalendar({ predictionData, cycleHistory, onPredicti
   const selectedDateKey = useMemo(() => toISODate(selectedDate), [selectedDate]);
   const selectedDateStatus = predictionByDate[selectedDateKey] || null;
   const selectedDatePeriodState = userPeriodByDate[selectedDateKey] || "";
+  const selectedCycleEntry = useMemo(
+    () => findEntryByDate(cycleHistory, selectedDateKey, todayKey),
+    [cycleHistory, selectedDateKey, todayKey],
+  );
   const selectedSymptoms = useMemo(() => getSymptomsFromLog(selectedDayLog), [selectedDayLog]);
   const selectedHistoricalPattern = useMemo(
     () => resolveHistoricalPattern(selectedDateStatus?.phase, dailyLogsByDate, predictionByDate),
@@ -441,6 +491,18 @@ export default function CycleCalendar({ predictionData, cycleHistory, onPredicti
   }, [selectedDateKey, dailyLogsByDate]);
 
   useEffect(() => {
+    setEditPeriodError("");
+    if (!selectedCycleEntry) {
+      setEditPeriodStartDate("");
+      setEditPeriodEndDate("");
+      return;
+    }
+
+    setEditPeriodStartDate(String(selectedCycleEntry.period_start_date || "").slice(0, 10));
+    setEditPeriodEndDate(String(selectedCycleEntry.period_end_date || "").slice(0, 10));
+  }, [selectedCycleEntry]);
+
+  useEffect(() => {
     async function loadDayLog() {
       if (!isPanelOpen) {
         return;
@@ -519,7 +581,7 @@ export default function CycleCalendar({ predictionData, cycleHistory, onPredicti
       await refreshOngoingPeriodStatus();
 
       if (typeof onCycleLogged === "function") {
-        onCycleLogged(getVisibleGridRange(viewDate));
+        await onCycleLogged(getVisibleGridRange(viewDate));
       }
     } catch (error) {
       setActionMessage(error.message || "Unable to mark period start.");
@@ -561,12 +623,93 @@ export default function CycleCalendar({ predictionData, cycleHistory, onPredicti
       await refreshOngoingPeriodStatus();
 
       if (typeof onCycleLogged === "function") {
-        onCycleLogged(getVisibleGridRange(viewDate));
+        await onCycleLogged(getVisibleGridRange(viewDate));
       }
     } catch (error) {
       setActionMessage(error.message || "Unable to mark period end.");
     } finally {
       setIsMarkingPeriodEnd(false);
+    }
+  }
+
+  async function handleUpdateSelectedEntry() {
+    const token = getAuthToken();
+    if (!token) {
+      setEditPeriodError("Please login again to update cycle data.");
+      return;
+    }
+
+    if (!selectedCycleEntry?.id) {
+      setEditPeriodError("No cycle entry found for the selected date.");
+      return;
+    }
+
+    if (!isValidISODateKey(editPeriodStartDate)) {
+      setEditPeriodError("Start date must be valid (YYYY-MM-DD).");
+      return;
+    }
+
+    if (editPeriodEndDate && !isValidISODateKey(editPeriodEndDate)) {
+      setEditPeriodError("End date must be valid (YYYY-MM-DD).");
+      return;
+    }
+
+    if (editPeriodEndDate && editPeriodEndDate < editPeriodStartDate) {
+      setEditPeriodError("End date cannot be earlier than start date.");
+      return;
+    }
+
+    setIsUpdatingPeriodEntry(true);
+    setEditPeriodError("");
+
+    try {
+      await updateCycleEntry(
+        selectedCycleEntry.id,
+        {
+          period_start_date: editPeriodStartDate,
+          period_end_date: editPeriodEndDate || undefined,
+        },
+        token,
+      );
+
+      setActionMessage("Period entry updated.");
+      await refreshOngoingPeriodStatus();
+      if (typeof onCycleLogged === "function") {
+        await onCycleLogged(getVisibleGridRange(viewDate));
+      }
+    } catch (error) {
+      setEditPeriodError(error.message || "Unable to update cycle entry.");
+    } finally {
+      setIsUpdatingPeriodEntry(false);
+    }
+  }
+
+  async function handleDeleteSelectedEntry() {
+    const token = getAuthToken();
+    if (!token) {
+      setEditPeriodError("Please login again to delete cycle data.");
+      return;
+    }
+
+    if (!selectedCycleEntry?.id) {
+      setEditPeriodError("No cycle entry found for the selected date.");
+      return;
+    }
+
+    setIsDeletingPeriodEntry(true);
+    setEditPeriodError("");
+
+    try {
+      await deleteCycleEntry(selectedCycleEntry.id, token);
+      setActionMessage("Period entry deleted.");
+      await refreshOngoingPeriodStatus();
+      if (typeof onCycleLogged === "function") {
+        await onCycleLogged(getVisibleGridRange(viewDate));
+      }
+    } catch (error) {
+      setEditPeriodError(error.message || "Unable to delete cycle entry.");
+    } finally {
+      setIsDeletingPeriodEntry(false);
     }
   }
 
@@ -697,27 +840,21 @@ export default function CycleCalendar({ predictionData, cycleHistory, onPredicti
           const actualPeriodState = userPeriodByDate[dateKey] || "";
           const dayLog = dailyLogsByDate[dateKey] || null;
           const eventFlags = getPredictionEventsForDate(dateKey, predictionData, todayKey);
-          const phaseClassSuffix = dateStatus ? getPhaseClassSuffix(dateStatus.phase) : "";
+          const isPeriodDay = Boolean(actualPeriodState) || Boolean(dateStatus?.isPeriod) || eventFlags.isPredictedNextPeriod;
+          const isOvulationDay = !isPeriodDay && (Boolean(dateStatus?.isOvulation) || eventFlags.isPredictedOvulation);
+          const isFertileDay = !isPeriodDay && !isOvulationDay && (Boolean(dateStatus?.isFertile) || eventFlags.isPredictedFertileWindow);
 
           const dayClassNames = ["calendar-day"];
           if (isOutsideMonth) dayClassNames.push("outside-month");
-          if (phaseClassSuffix && !actualPeriodState) dayClassNames.push(`phase-${phaseClassSuffix}`);
-          if (!actualPeriodState && dateStatus?.isPeriod) dayClassNames.push("period-strong");
-          if (actualPeriodState === "ongoing") dayClassNames.push("period-user-ongoing");
-          if (actualPeriodState === "completed") dayClassNames.push("period-user-completed");
-          if (dateStatus?.isOvulation) dayClassNames.push("ovulation-strong");
-          if (dateStatus?.isFertile) dayClassNames.push("fertile-day");
-          if (eventFlags.isPredictedNextPeriod) dayClassNames.push("event-next-period");
-          if (eventFlags.isPredictedOvulation) dayClassNames.push("event-ovulation");
-          if (eventFlags.isPredictedFertileWindow) dayClassNames.push("event-fertile-window");
+          if (isPeriodDay) dayClassNames.push("day-period");
+          if (isOvulationDay) dayClassNames.push("day-ovulation");
+          if (isFertileDay) dayClassNames.push("day-fertile");
           if (isToday) dayClassNames.push("today-day");
           if (isSelected) dayClassNames.push("selected-day");
 
           const dateAriaLabel = dateStatus
             ? `${date.toDateString()} - ${dateStatus.phase} phase, cycle day ${dateStatus.cycleDay}`
             : date.toDateString();
-          const moodEmoji = MOOD_EMOJI[String(dayLog?.mood || "").toLowerCase()] || "";
-          const symptomIcons = QUICK_SYMPTOM_OPTIONS.filter((item) => dayLog?.[item.key]).map((item) => item.icon);
           const hoverTitle = buildDateTooltip({
             date,
             status: dateStatus,
@@ -737,16 +874,6 @@ export default function CycleCalendar({ predictionData, cycleHistory, onPredicti
               title={hoverTitle}
             >
               <span className="calendar-day-number">{date.getDate()}</span>
-              {moodEmoji || symptomIcons.length > 0 ? (
-                <span className="calendar-day-indicators" aria-hidden="true">
-                  {moodEmoji ? <span className="calendar-day-mood-indicator">{moodEmoji}</span> : null}
-                  {symptomIcons.slice(0, 2).map((icon, index) => (
-                    <span key={`${dateKey}-${icon}-${index}`} className="calendar-day-symptom-indicator">
-                      {icon}
-                    </span>
-                  ))}
-                </span>
-              ) : null}
             </button>
           );
         })}
@@ -754,31 +881,16 @@ export default function CycleCalendar({ predictionData, cycleHistory, onPredicti
 
       <div className="calendar-legend" aria-label="Calendar legend">
         <span className="calendar-legend-item">
-          <span className="legend-dot menstrual" aria-hidden="true" /> Menstrual (red)
+          <span className="legend-dot menstrual" aria-hidden="true" /> Period
         </span>
         <span className="calendar-legend-item">
-          <span className="legend-period ongoing" aria-hidden="true" /> Logged ongoing period
+          <span className="legend-dot ovulation" aria-hidden="true" /> Ovulation
         </span>
         <span className="calendar-legend-item">
-          <span className="legend-period completed" aria-hidden="true" /> Logged completed period
+          <span className="legend-dot fertile" aria-hidden="true" /> Fertile window
         </span>
         <span className="calendar-legend-item">
-          <span className="legend-dot follicular" aria-hidden="true" /> Follicular (blue)
-        </span>
-        <span className="calendar-legend-item">
-          <span className="legend-dot ovulation" aria-hidden="true" /> Ovulation (green)
-        </span>
-        <span className="calendar-legend-item">
-          <span className="legend-dot luteal" aria-hidden="true" /> Luteal (yellow)
-        </span>
-        <span className="calendar-legend-item">
-          <span className="legend-event next" aria-hidden="true" /> Predicted next period
-        </span>
-        <span className="calendar-legend-item">
-          <span className="legend-event ovulation" aria-hidden="true" /> Predicted ovulation
-        </span>
-        <span className="calendar-legend-item">
-          <span className="legend-event fertile" aria-hidden="true" /> Predicted fertile window
+          <span className="legend-dot today" aria-hidden="true" /> Today
         </span>
       </div>
 
@@ -826,9 +938,7 @@ export default function CycleCalendar({ predictionData, cycleHistory, onPredicti
             ) : null}
           </div>
         </>
-      ) : (
-        <p className="calendar-empty-state">Adaptive prediction data is loading. Click a date to open day details.</p>
-      )}
+      ) : null}
 
       {isLoadingVisibleLogs ? <p className="calendar-day-subtle">Loading daily indicators...</p> : null}
 
@@ -943,6 +1053,52 @@ export default function CycleCalendar({ predictionData, cycleHistory, onPredicti
                     <p className="calendar-day-subtle">These date predictions are currently approximate.</p>
                   ) : null}
                 </section>
+
+                {selectedCycleEntry?.id ? (
+                  <section className="calendar-quick-section">
+                    <p className="calendar-day-detail-label">Edit / Delete Period Entry</p>
+                    <div className="calendar-entry-edit-grid">
+                      <div className="form-group">
+                        <label htmlFor="edit-period-start">Period Start</label>
+                        <input
+                          id="edit-period-start"
+                          type="date"
+                          value={editPeriodStartDate}
+                          onChange={(event) => setEditPeriodStartDate(event.target.value)}
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor="edit-period-end">Period End (optional)</label>
+                        <input
+                          id="edit-period-end"
+                          type="date"
+                          value={editPeriodEndDate}
+                          onChange={(event) => setEditPeriodEndDate(event.target.value)}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="calendar-entry-edit-actions">
+                      <button
+                        type="button"
+                        className="calendar-quick-save-btn"
+                        onClick={handleUpdateSelectedEntry}
+                        disabled={isUpdatingPeriodEntry || isDeletingPeriodEntry}
+                      >
+                        {isUpdatingPeriodEntry ? "Saving..." : "Save Changes"}
+                      </button>
+                      <button
+                        type="button"
+                        className="calendar-day-ghost-btn"
+                        onClick={handleDeleteSelectedEntry}
+                        disabled={isUpdatingPeriodEntry || isDeletingPeriodEntry}
+                      >
+                        {isDeletingPeriodEntry ? "Deleting..." : "Delete Entry"}
+                      </button>
+                    </div>
+                    {editPeriodError ? <p className="field-error">{editPeriodError}</p> : null}
+                  </section>
+                ) : null}
               </>
             ) : null}
 

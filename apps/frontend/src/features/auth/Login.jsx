@@ -136,6 +136,10 @@ export default function Login() {
         <motion.p className="link-row login-link-row" variants={staggerItem}>
           New user? <Link to="/signup">Go to Signup</Link>
         </motion.p>
+
+        <motion.p className="link-row login-link-row" variants={staggerItem}>
+          <Link to="/forgot-password">Forgot Password?</Link>
+        </motion.p>
       </motion.section>
     </PageFrame>
   );
